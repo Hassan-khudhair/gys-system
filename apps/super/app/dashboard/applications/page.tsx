@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from "react";
 import { Header } from "../../../components/header";
 import { formatDate } from "@gym/lib";
 import type { GymApplication } from "@gym/lib";
+import { createClient } from "../../../lib/supabase/client";
 import {
   Clock, CheckCircle2, XCircle, Building2, Mail, Phone,
   MapPin, Loader2, AlertCircle
@@ -26,7 +27,7 @@ function RejectModal({
   open: boolean;
   application: GymApplication | null;
   onClose: () => void;
-  onRejected: () => void;
+  onRejected: (applicationId: string, reason: string) => Promise<void>;
 }) {
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,14 +36,10 @@ function RejectModal({
 
   async function handleReject() {
     setLoading(true);
-    await fetch("/api/applications/reject", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ applicationId: application!.id, reason }),
-    });
+    await onRejected(application!.id, reason);
     setLoading(false);
-    onRejected();
     onClose();
+    setReason("");
   }
 
   return (
@@ -90,23 +87,55 @@ export default function ApplicationsPage() {
   const [rejectModal, setRejectModal] = useState<GymApplication | null>(null);
 
   const load = useCallback(async () => {
-    const res = await fetch("/api/applications/list");
-    const json = await res.json();
-    setApplications(json.data ?? []);
+    const supabase = createClient();
+    const { data, error } = await supabase
+      .from("gym_applications")
+      .select("*")
+      .order("created_at", { ascending: false });
+    
+    if (error) {
+      console.error("Error loading applications:", error);
+    } else {
+      setApplications(data || []);
+    }
     setLoading(false);
   }, []);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    load();
+  }, [load]);
 
   async function handleApprove(app: GymApplication) {
     if (!confirm(`Approve "${app.gym_name}" and create their gym account?`)) return;
     setApproving(app.id);
-    await fetch("/api/applications/approve", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ applicationId: app.id }),
+    
+    const supabase = createClient();
+    const { error } = await supabase.rpc("approve_gym_application", { 
+      application_id: app.id 
     });
+
+    if (error) {
+      alert(error.message);
+    }
+
     setApproving(null);
+    load();
+  }
+
+  async function handleReject(applicationId: string, reason: string) {
+    const supabase = createClient();
+    const { error } = await supabase
+      .from("gym_applications")
+      .update({ 
+        status: "rejected", 
+        rejection_reason: reason || null,
+        reviewed_at: new Date().toISOString() 
+      })
+      .eq("id", applicationId);
+
+    if (error) {
+      alert(error.message);
+    }
     load();
   }
 
@@ -274,7 +303,7 @@ export default function ApplicationsPage() {
         open={rejectModal !== null}
         application={rejectModal}
         onClose={() => setRejectModal(null)}
-        onRejected={load}
+        onRejected={handleReject}
       />
     </div>
   );

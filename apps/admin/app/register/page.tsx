@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import { Dumbbell, Eye, EyeOff, Loader2, CheckCircle2, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
+import { createClient } from "../../lib/supabase/client";
+
 export default function RegisterPage() {
   const router = useRouter();
   const [form, setForm] = useState({
@@ -41,16 +43,47 @@ export default function RegisterPage() {
     setLoading(true);
     setError(null);
 
-    const res = await fetch("/api/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
+    const supabase = createClient();
+
+    // 1. Sign up the user in Supabase Auth
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: form.adminEmail,
+      password: form.password,
+      options: {
+        data: {
+          role: "pending_gym_admin",
+          full_name: form.adminName,
+        },
+      },
     });
 
-    const json = await res.json();
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+      return;
+    }
 
-    if (!res.ok) {
-      setError(json.error ?? "Something went wrong. Please try again.");
+    if (!authData.user) {
+      setError("Failed to create user account.");
+      setLoading(false);
+      return;
+    }
+
+    // 2. Insert the gym application record
+    const { error: appError } = await supabase.from("gym_applications").insert({
+      gym_name:   form.gymName,
+      city:       form.city       || null,
+      address:    form.address    || null,
+      phone:      form.phone      || null,
+      gym_email:  form.gymEmail   || null,
+      admin_name: form.adminName,
+      admin_email: form.adminEmail,
+      user_id:    authData.user.id,
+      status:     "pending",
+    });
+
+    if (appError) {
+      setError(appError.message);
       setLoading(false);
       return;
     }
