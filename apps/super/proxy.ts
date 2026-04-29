@@ -3,7 +3,7 @@ import { NextResponse, type NextRequest } from "next/server";
 
 type CookieItem = { name: string; value: string; options: CookieOptions };
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
 
   const supabase = createServerClient(
@@ -35,8 +35,7 @@ export async function middleware(request: NextRequest) {
 
   const isPublic =
     pathname.startsWith("/login") ||
-    pathname.startsWith("/register") ||
-    pathname.startsWith("/pending") ||
+    pathname.startsWith("/setup") ||
     pathname.startsWith("/api/");
 
   if (!user && !isPublic) {
@@ -45,27 +44,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
 
-  if (user) {
-    const role = user.user_metadata?.role as string | undefined;
-    const isApproved = role === "gym_admin";
-
-    if (isApproved && (pathname.startsWith("/login") || pathname.startsWith("/register"))) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
-    }
-
-    if (!isApproved && pathname.startsWith("/dashboard")) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/pending";
-      return NextResponse.redirect(url);
-    }
-
-    if (isApproved && pathname.startsWith("/pending")) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
-    }
+  if (user && (pathname.startsWith("/login") || pathname.startsWith("/setup"))) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/dashboard";
+    return NextResponse.redirect(url);
   }
 
   return supabaseResponse;
