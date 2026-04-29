@@ -12,7 +12,13 @@ export default async function DashboardLayout({ children }: { children: React.Re
       .select("gym_id, gyms(name)")
       .eq("user_id", user.id)
       .single();
-    gymName = (admin?.gyms as { name: string } | null)?.name ?? undefined;
+    // Handle the case where gyms might be returned as an array or a single object
+    const gymsData = admin?.gyms;
+    if (Array.isArray(gymsData)) {
+      gymName = gymsData[0]?.name;
+    } else if (gymsData) {
+      gymName = (gymsData as { name: string }).name;
+    }
   }
 
   return (
