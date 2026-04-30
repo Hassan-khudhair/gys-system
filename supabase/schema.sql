@@ -142,3 +142,6 @@ SELECT
 FROM public.gyms g
 LEFT JOIN public.players p ON p.gym_id = g.id
 GROUP BY g.id;
+
+
+-- just a simple commit to fresh the build in vercel
