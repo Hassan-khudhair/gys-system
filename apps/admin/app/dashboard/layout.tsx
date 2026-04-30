@@ -7,6 +7,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   let gymName: string | undefined;
   let adminName: string | undefined;
+  let gymId: string | null = null;
 
   if (user) {
     const { data: admin } = await supabase
@@ -15,6 +16,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
       .eq("user_id", user.id)
       .single();
 
+    gymId = admin?.gym_id ?? null;
     adminName = admin?.name ?? user.user_metadata?.full_name;
     const gymsData = admin?.gyms;
     if (Array.isArray(gymsData)) gymName = gymsData[0]?.name;
@@ -22,10 +24,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
   }
 
   return (
-    <DashboardShell 
-      gymName={gymName} 
-      adminName={adminName} 
+    <DashboardShell
+      gymName={gymName}
+      adminName={adminName}
       email={user?.email}
+      gymId={gymId}
     >
       {children}
     </DashboardShell>

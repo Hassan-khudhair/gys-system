@@ -126,6 +126,21 @@ const ar = {
   col_start: "البداية",
   col_end: "النهاية",
 
+  // exercise + financial
+  exercise_type_label: "نوع التمرين",
+  fitness: "لياقة بدنية",
+  bodybuilding: "كمال الأجسام",
+
+  total_revenue: "إجمالي الإيرادات",
+  monthly_revenue: "إيرادات هذا الشهر",
+  fitness_revenue: "إيرادات اللياقة",
+  bodybuilding_revenue: "إيرادات كمال الأجسام",
+  currency: "د.ع",
+
+  // player status day text
+  days_left: "ي متبقٍ",
+  days_ago: "ي مضت",
+
   // theme / language
   dark: "داكن",
   light: "فاتح",
@@ -248,6 +263,19 @@ const en: typeof ar = {
   col_subscription: "Subscription",
   col_start: "Start",
   col_end: "End",
+
+  exercise_type_label: "Exercise Type",
+  fitness: "Fitness",
+  bodybuilding: "Bodybuilding",
+
+  total_revenue: "Total Revenue",
+  monthly_revenue: "This Month Revenue",
+  fitness_revenue: "Fitness Revenue",
+  bodybuilding_revenue: "Bodybuilding Revenue",
+  currency: "IQD",
+
+  days_left: "d left",
+  days_ago: "d ago",
 };
 
 type T = typeof ar;

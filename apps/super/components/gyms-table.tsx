@@ -6,6 +6,7 @@ import { Search, Eye, Pencil, Trash2, Building2, CheckCircle2, XCircle, AlertCir
 import type { GymSummary } from "@gym/lib";
 import { formatDate } from "@gym/lib";
 import { useLocale } from "../lib/i18n";
+import { Pagination } from "./pagination";
 
 function GymInitial({ name }: { name: string }) {
   const letters = name.trim().split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
@@ -18,13 +19,20 @@ function GymInitial({ name }: { name: string }) {
 
 interface Props {
   gyms: GymSummary[];
+  loading: boolean;
+  page: number;
+  totalPages: number;
+  onPage: (p: number) => void;
+  search: string;
+  onSearch: (s: string) => void;
   onEdit: (gym: GymSummary) => void;
   onDelete: (gym: GymSummary) => void;
 }
 
-export function GymsTable({ gyms, onEdit, onDelete }: Props) {
+export function GymsTable({ 
+  gyms, loading, page, totalPages, onPage, search, onSearch, onEdit, onDelete 
+}: Props) {
   const { t } = useLocale();
-  const [search, setSearch] = useState("");
   const router = useRouter();
 
   const STATUS_CONFIG = {
@@ -33,23 +41,23 @@ export function GymsTable({ gyms, onEdit, onDelete }: Props) {
     suspended: { label: t("status_suspended"), icon: AlertCircle,  className: "text-danger bg-danger/10 border-danger/20" },
   };
 
-  const filtered = gyms.filter(
-    (g) => g.name.toLowerCase().includes(search.toLowerCase()) || (g.city ?? "").toLowerCase().includes(search.toLowerCase())
-  );
-
   const cols = [t("col_gym"), t("col_city"), t("col_status"), t("col_members"), t("col_active"), t("col_expiring"), t("col_created"), ""];
 
   return (
-    <div className="bg-surface border border-border rounded-xl overflow-hidden transition-colors">
+    <div className="bg-surface border border-border rounded-xl overflow-hidden transition-colors relative">
+      {/* Loading Overlay */}
+      {loading && (
+        <div className="absolute inset-0 z-10 bg-surface/60 backdrop-blur-[2px] flex items-center justify-center">
+          <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        </div>
+      )}
+
       <div className="px-5 py-4 border-b border-border flex items-center gap-3">
         <div className="relative flex-1 max-w-xs">
           <Search className="absolute inset-s-3 top-1/2 -translate-y-1/2 w-4 h-4 text-faint" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t("search_gyms")}
+          <input value={search} onChange={(e) => onSearch(e.target.value)} placeholder={t("search_gyms")}
             className="w-full bg-bg border border-border rounded-lg ps-9 pe-4 py-2 text-sm text-text placeholder:text-faint focus:outline-none focus:border-primary transition-colors" />
         </div>
-        <span className="text-xs text-muted ms-auto">
-          {filtered.length} {filtered.length === 1 ? t("gym_singular") : t("gym_plural")}
-        </span>
       </div>
 
       <div className="hidden md:block overflow-x-auto">
@@ -62,7 +70,7 @@ export function GymsTable({ gyms, onEdit, onDelete }: Props) {
             </tr>
           </thead>
           <tbody className="divide-y divide-border">
-            {filtered.length === 0 && (
+            {!loading && gyms.length === 0 && (
               <tr>
                 <td colSpan={8} className="px-5 py-12 text-center text-muted">
                   <Building2 className="w-8 h-8 mx-auto mb-3 opacity-30" />
@@ -70,7 +78,7 @@ export function GymsTable({ gyms, onEdit, onDelete }: Props) {
                 </td>
               </tr>
             )}
-            {filtered.map((gym) => {
+            {gyms.map((gym) => {
               const statusCfg = STATUS_CONFIG[gym.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.active;
               const StatusIcon = statusCfg.icon;
               return (
@@ -125,13 +133,13 @@ export function GymsTable({ gyms, onEdit, onDelete }: Props) {
 
       {/* Mobile Cards */}
       <div className="md:hidden divide-y divide-border">
-        {filtered.length === 0 && (
+        {!loading && gyms.length === 0 && (
           <div className="px-5 py-12 text-center text-muted">
             <Building2 className="w-8 h-8 mx-auto mb-3 opacity-30" />
             <p>{search ? t("no_gyms_search") : t("no_gyms_start")}</p>
           </div>
         )}
-        {filtered.map((gym) => {
+        {gyms.map((gym) => {
           const statusCfg = STATUS_CONFIG[gym.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.active;
           const StatusIcon = statusCfg.icon;
           return (
@@ -186,6 +194,8 @@ export function GymsTable({ gyms, onEdit, onDelete }: Props) {
           );
         })}
       </div>
+
+      <Pagination page={page} totalPages={totalPages} onPage={onPage} />
     </div>
   );
 }

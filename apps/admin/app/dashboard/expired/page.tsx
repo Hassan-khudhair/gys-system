@@ -3,34 +3,51 @@
 import { useState, useEffect, useCallback } from "react";
 import { createClient } from "../../../lib/supabase/client";
 import { useLocale } from "../../../lib/i18n";
+import { useAdmin } from "../../../lib/admin-context";
 import { PlayersTable } from "../../../components/players-table";
 import { PlayerModal } from "../../../components/player-modal";
+import { RenewModal } from "../../../components/renew-modal";
 import type { Player } from "@gym/lib";
+
+const PAGE_SIZE = 15;
 
 export default function ExpiredPage() {
   const { t } = useLocale();
+  const { gymId } = useAdmin();
+
   const [players, setPlayers] = useState<Player[]>([]);
-  const [gymId, setGymId] = useState<string | null>(null);
+  const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [editPlayer, setEditPlayer] = useState<Player | null>(null);
+  const [page, setPage] = useState(1);
+  const [search, setSearch] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  const [editOpen, setEditOpen] = useState(false);
+  const [renewOpen, setRenewOpen] = useState(false);
+  const [selectedPlayer, setSelectedPlayer] = useState<Player | null>(null);
+
+  useEffect(() => {
+    const id = setTimeout(() => { setSearchQuery(search); setPage(1); }, 300);
+    return () => clearTimeout(id);
+  }, [search]);
 
   const load = useCallback(async () => {
+    if (!gymId) return;
+    setLoading(true);
     const supabase = createClient();
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    const { data: adminRecord } = await supabase.from("gym_admins").select("gym_id").eq("user_id", user.id).single();
-    if (!adminRecord) return;
-    setGymId(adminRecord.gym_id);
-
     const today = new Date().toISOString().slice(0, 10);
-    const { data } = await supabase.from("players").select("*")
-      .eq("gym_id", adminRecord.gym_id).lt("end_date", today).order("end_date", { ascending: false });
+    const from = (page - 1) * PAGE_SIZE;
+    const to = from + PAGE_SIZE - 1;
 
+    let query = supabase.from("players").select("*", { count: "exact" })
+      .eq("gym_id", gymId).lt("end_date", today);
+    if (searchQuery) query = query.or(`name.ilike.%${searchQuery}%,phone.ilike.%${searchQuery}%`);
+
+    const { data, count } = await query.order("end_date", { ascending: false }).range(from, to);
     setPlayers(data ?? []);
+    setTotalCount(count ?? 0);
     setLoading(false);
-  }, []);
+  }, [gymId, page, searchQuery]);
 
   useEffect(() => { load(); }, [load]);
 
@@ -41,12 +58,14 @@ export default function ExpiredPage() {
     load();
   }
 
+  const totalPages = Math.max(1, Math.ceil(totalCount / PAGE_SIZE));
+
   return (
     <div className="flex-1 overflow-y-auto">
       <div className="px-6 py-5 border-b border-border">
         <h1 className="text-lg font-semibold text-text">{t("expired_title")}</h1>
         <p className="text-sm text-muted mt-0.5">
-          {players.length} {players.length === 1 ? t("expired_singular") : t("expired_plural")}
+          {totalCount} {totalCount === 1 ? t("expired_singular") : t("expired_plural")}
         </p>
       </div>
 
@@ -55,29 +74,38 @@ export default function ExpiredPage() {
           {t("expired_info")}
         </div>
 
-        {loading ? (
-          <div className="bg-surface border border-border rounded-xl p-16 flex items-center justify-center transition-colors">
-            <div className="w-6 h-6 border-2 border-danger border-t-transparent rounded-full animate-spin" />
-          </div>
-        ) : (
-          <PlayersTable
-            players={players}
-            filterStatus="all"
-            onEdit={(p) => { setEditPlayer(p); setModalOpen(true); }}
-            onDelete={handleDelete}
-            onRenew={(p) => { setEditPlayer(p); setModalOpen(true); }}
-          />
-        )}
+        <PlayersTable
+          players={players}
+          loading={loading}
+          page={page}
+          totalPages={totalPages}
+          onPage={setPage}
+          search={search}
+          onSearch={setSearch}
+          onEdit={(p) => { setSelectedPlayer(p); setEditOpen(true); }}
+          onDelete={handleDelete}
+          onRenew={(p) => { setSelectedPlayer(p); setRenewOpen(true); }}
+          filterStatus="expired"
+        />
       </div>
 
       {gymId && (
-        <PlayerModal
-          open={modalOpen}
-          player={editPlayer}
-          gymId={gymId}
-          onClose={() => setModalOpen(false)}
-          onSaved={load}
-        />
+        <>
+          <PlayerModal
+            open={editOpen}
+            player={selectedPlayer}
+            gymId={gymId}
+            onClose={() => setEditOpen(false)}
+            onSaved={load}
+          />
+          <RenewModal
+            open={renewOpen}
+            player={selectedPlayer}
+            gymId={gymId}
+            onClose={() => setRenewOpen(false)}
+            onSaved={load}
+          />
+        </>
       )}
     </div>
   );

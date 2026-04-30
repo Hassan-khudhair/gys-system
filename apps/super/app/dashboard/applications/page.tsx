@@ -6,6 +6,7 @@ import { formatDate } from "@gym/lib";
 import type { GymApplication } from "@gym/lib";
 import { createClient } from "../../../lib/supabase/client";
 import { Clock, CheckCircle2, XCircle, Building2, Mail, Phone, MapPin, Loader2, AlertCircle } from "lucide-react";
+import { Pagination } from "../../../components/pagination";
 
 const STATUS_CLS = {
   pending:  "text-warning bg-warning/10 border-warning/20",
@@ -67,6 +68,7 @@ export default function ApplicationsPage() {
   const [applications, setApplications] = useState<GymApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("pending");
+  const [page, setPage] = useState(1);
   const [approving, setApproving] = useState<string | null>(null);
   const [rejectModal, setRejectModal] = useState<GymApplication | null>(null);
 
@@ -98,6 +100,8 @@ export default function ApplicationsPage() {
     load();
   }
 
+  const PAGE_SIZE = 10;
+
   const counts = {
     pending:  applications.filter((a) => a.status === "pending").length,
     approved: applications.filter((a) => a.status === "approved").length,
@@ -105,6 +109,10 @@ export default function ApplicationsPage() {
   };
 
   const filtered = applications.filter((a) => a.status === tab);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  function handleTab(key: Tab) { setTab(key); setPage(1); }
 
   const STATUS_ICONS = { pending: Clock, approved: CheckCircle2, rejected: XCircle };
 
@@ -124,7 +132,7 @@ export default function ApplicationsPage() {
       <div className="p-6 space-y-5">
         <div className="flex items-center gap-1 bg-surface border border-border rounded-lg p-1 w-fit transition-colors">
           {TABS.map(({ key, label, icon: Icon }) => (
-            <button key={key} onClick={() => setTab(key)}
+            <button key={key} onClick={() => handleTab(key)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
                 tab === key ? "bg-surface-2 text-text shadow-sm" : "text-muted hover:text-text"
               }`}
@@ -161,7 +169,7 @@ export default function ApplicationsPage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {filtered.map((app) => {
+            {paginated.map((app) => {
               const StatusIcon = STATUS_ICONS[app.status as keyof typeof STATUS_ICONS] ?? Clock;
               const statusCls = STATUS_CLS[app.status as keyof typeof STATUS_CLS] ?? STATUS_CLS.pending;
               const isApprovingThis = approving === app.id;
@@ -224,6 +232,10 @@ export default function ApplicationsPage() {
               );
             })}
           </div>
+        )}
+
+        {!loading && filtered.length > PAGE_SIZE && (
+          <Pagination page={page} totalPages={totalPages} onPage={setPage} />
         )}
       </div>
 

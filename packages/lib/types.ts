@@ -1,8 +1,21 @@
 // ---- Database row types matching supabase/schema.sql ----
 
 export type GymStatus = "active" | "inactive" | "suspended";
-export type SubscriptionType = "monthly" | "quarterly" | "semi_annual" | "annual";
+export type SubscriptionType = string; // free text: plan name or legacy type
 export type PlayerStatus = "active" | "expiring" | "expired";
+export type ExerciseType = "fitness" | "bodybuilding";
+
+export interface SubscriptionPlan {
+  id: string;
+  gym_id: string;
+  name: string;
+  exercise_type: ExerciseType;
+  duration_months: number;
+  price: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
 export interface Gym {
   id: string;
@@ -46,6 +59,8 @@ export interface Player {
   end_date: string;
   subscription_type: SubscriptionType;
   amount_paid: number | null;
+  exercise_type: ExerciseType | null;
+  plan_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -89,4 +104,6 @@ export interface CreatePlayerInput {
   end_date: string;
   subscription_type: SubscriptionType;
   amount_paid?: number;
+  exercise_type?: ExerciseType;
+  plan_id?: string;
 }

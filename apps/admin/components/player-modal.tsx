@@ -4,7 +4,8 @@ import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
 import { createClient } from "../lib/supabase/client";
 import { useLocale } from "../lib/i18n";
-import type { Player } from "@gym/lib";
+import { useAdmin } from "../lib/admin-context";
+import type { Player, ExerciseType } from "@gym/lib";
 
 interface Props {
   open: boolean;
@@ -13,10 +14,6 @@ interface Props {
   onClose: () => void;
   onSaved: () => void;
 }
-
-const SUBSCRIPTION_MONTHS: Record<string, number> = {
-  monthly: 1, quarterly: 3, semi_annual: 6, annual: 12,
-};
 
 function todayStr() { return new Date().toISOString().slice(0, 10); }
 function addMonths(dateStr: string, months: number) {
@@ -27,49 +24,81 @@ function addMonths(dateStr: string, months: number) {
 
 export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
   const { t } = useLocale();
+  const { plans: allPlans } = useAdmin(); // plans already fetched once in context
   const isEdit = Boolean(player);
   const [form, setForm] = useState({
     name: "", phone: "", email: "", notes: "",
     start_date: todayStr(),
     end_date: addMonths(todayStr(), 1),
-    subscription_type: "monthly",
+    subscription_type: "",
     amount_paid: "",
+    exercise_type: "fitness" as ExerciseType,
+    plan_id: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const SUBSCRIPTION_OPTIONS = [
-    { value: "monthly",     label: t("sub_monthly") },
-    { value: "quarterly",   label: t("sub_quarterly") },
-    { value: "semi_annual", label: t("sub_semi_annual") },
-    { value: "annual",      label: t("sub_annual") },
-  ];
+  const plans = allPlans.filter((p) => p.is_active);
 
   useEffect(() => {
     if (player) {
       setForm({
-        name: player.name, phone: player.phone ?? "", email: player.email ?? "",
-        notes: player.notes ?? "", start_date: player.start_date, end_date: player.end_date,
+        name: player.name,
+        phone: player.phone ?? "",
+        email: player.email ?? "",
+        notes: player.notes ?? "",
+        start_date: player.start_date,
+        end_date: player.end_date,
         subscription_type: player.subscription_type,
         amount_paid: player.amount_paid != null ? String(player.amount_paid) : "",
+        exercise_type: player.exercise_type ?? "fitness",
+        plan_id: player.plan_id ?? "",
       });
     } else {
       const today = todayStr();
-      setForm({ name: "", phone: "", email: "", notes: "", start_date: today, end_date: addMonths(today, 1), subscription_type: "monthly", amount_paid: "" });
+      setForm({
+        name: "", phone: "", email: "", notes: "",
+        start_date: today, end_date: addMonths(today, 1),
+        subscription_type: "", amount_paid: "",
+        exercise_type: "fitness", plan_id: "",
+      });
     }
     setError(null);
   }, [player, open]);
 
   if (!open) return null;
 
+  const filteredPlans = plans.filter((p) => p.exercise_type === form.exercise_type);
+
   function set(field: string, value: string) {
     setForm((prev) => {
       const next = { ...prev, [field]: value };
-      if ((field === "subscription_type" || field === "start_date") && !isEdit) {
-        const months = SUBSCRIPTION_MONTHS[field === "subscription_type" ? value : next.subscription_type] ?? 1;
-        const start = field === "start_date" ? value : next.start_date;
-        next.end_date = addMonths(start, months);
+
+      // When exercise type changes, clear plan selection
+      if (field === "exercise_type") {
+        next.plan_id = "";
+        next.subscription_type = "";
+        next.amount_paid = "";
       }
+
+      // When plan is selected, auto-fill price and end_date
+      if (field === "plan_id" && value) {
+        const selected = plans.find((p) => p.id === value);
+        if (selected) {
+          next.subscription_type = selected.name;
+          next.amount_paid = String(selected.price);
+          next.end_date = addMonths(next.start_date, selected.duration_months);
+        }
+      }
+
+      // When start date changes and plan is selected, recalculate end_date
+      if (field === "start_date" && next.plan_id) {
+        const selected = plans.find((p) => p.id === next.plan_id);
+        if (selected) {
+          next.end_date = addMonths(value, selected.duration_months);
+        }
+      }
+
       return next;
     });
   }
@@ -79,11 +108,17 @@ export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
     setLoading(true); setError(null);
     const supabase = createClient();
     const payload = {
-      gym_id: gymId, name: form.name.trim(),
-      phone: form.phone.trim() || null, email: form.email.trim() || null,
-      notes: form.notes.trim() || null, start_date: form.start_date, end_date: form.end_date,
-      subscription_type: form.subscription_type,
+      gym_id: gymId,
+      name: form.name.trim(),
+      phone: form.phone.trim() || null,
+      email: form.email.trim() || null,
+      notes: form.notes.trim() || null,
+      start_date: form.start_date,
+      end_date: form.end_date,
+      subscription_type: form.subscription_type || form.plan_id || "custom",
       amount_paid: form.amount_paid ? parseFloat(form.amount_paid) : null,
+      exercise_type: form.exercise_type || null,
+      plan_id: form.plan_id || null,
     };
     let err;
     if (isEdit && player) {
@@ -111,6 +146,7 @@ export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
         </div>
 
         <form onSubmit={handleSubmit} className="px-6 py-5 space-y-4">
+          {/* Basic info */}
           <div className="grid grid-cols-2 gap-4">
             <div className="col-span-2">
               <label className="block text-xs font-medium text-muted mb-1.5">{t("full_name")} *</label>
@@ -124,12 +160,50 @@ export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
               <label className="block text-xs font-medium text-muted mb-1.5">{t("email")}</label>
               <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="player@email.com" className={inputCls} />
             </div>
-            <div className="col-span-2">
-              <label className="block text-xs font-medium text-muted mb-1.5">{t("subscription_type")}</label>
-              <select value={form.subscription_type} onChange={(e) => set("subscription_type", e.target.value)} className={inputCls}>
-                {SUBSCRIPTION_OPTIONS.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
-              </select>
+          </div>
+
+          {/* Exercise type */}
+          <div>
+            <label className="block text-xs font-medium text-muted mb-2">{t("exercise_type_label")}</label>
+            <div className="grid grid-cols-2 gap-2">
+              {(["fitness", "bodybuilding"] as ExerciseType[]).map((et) => (
+                <button
+                  key={et}
+                  type="button"
+                  onClick={() => set("exercise_type", et)}
+                  className={`py-2.5 rounded-lg text-sm font-medium border transition-all ${
+                    form.exercise_type === et
+                      ? "bg-primary/15 border-primary text-primary"
+                      : "bg-bg border-border text-muted hover:text-text hover:border-border"
+                  }`}
+                >
+                  {et === "fitness" ? t("fitness") : t("bodybuilding")}
+                </button>
+              ))}
             </div>
+          </div>
+
+          {/* Subscription plan */}
+          <div>
+            <label className="block text-xs font-medium text-muted mb-1.5">{t("subscription_type")}</label>
+            {filteredPlans.length > 0 ? (
+              <select value={form.plan_id} onChange={(e) => set("plan_id", e.target.value)} className={inputCls}>
+                <option value="">{t("select_plan")}</option>
+                {filteredPlans.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} — {p.duration_months} {p.duration_months === 1 ? t("month") : t("months")} — {p.price.toLocaleString()} {t("currency")}
+                  </option>
+                ))}
+              </select>
+            ) : (
+              <div className="w-full bg-bg border border-border text-muted rounded-lg px-3.5 py-2.5 text-sm">
+                {t("no_plans_for_type")}
+              </div>
+            )}
+          </div>
+
+          {/* Dates */}
+          <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-medium text-muted mb-1.5">{t("start_date")} *</label>
               <input type="date" value={form.start_date} onChange={(e) => set("start_date", e.target.value)} required className={inputCls} />
@@ -138,14 +212,26 @@ export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
               <label className="block text-xs font-medium text-muted mb-1.5">{t("end_date")} *</label>
               <input type="date" value={form.end_date} onChange={(e) => set("end_date", e.target.value)} required className={inputCls} />
             </div>
-            <div className="col-span-2">
-              <label className="block text-xs font-medium text-muted mb-1.5">{t("amount_paid")}</label>
-              <input type="number" min="0" step="0.01" value={form.amount_paid} onChange={(e) => set("amount_paid", e.target.value)} placeholder="0.00" className={inputCls} />
-            </div>
-            <div className="col-span-2">
-              <label className="block text-xs font-medium text-muted mb-1.5">{t("notes")}</label>
-              <textarea value={form.notes} onChange={(e) => set("notes", e.target.value)} rows={2} placeholder={t("notes_placeholder")} className={`${inputCls} resize-none`} />
-            </div>
+          </div>
+
+          {/* Amount */}
+          <div>
+            <label className="block text-xs font-medium text-muted mb-1.5">{t("amount_paid")}</label>
+            <input
+              type="number"
+              min="0"
+              step="0.01"
+              value={form.amount_paid}
+              onChange={(e) => set("amount_paid", e.target.value)}
+              placeholder="0.00"
+              className={inputCls}
+            />
+          </div>
+
+          {/* Notes */}
+          <div>
+            <label className="block text-xs font-medium text-muted mb-1.5">{t("notes")}</label>
+            <textarea value={form.notes} onChange={(e) => set("notes", e.target.value)} rows={2} placeholder={t("notes_placeholder")} className={`${inputCls} resize-none`} />
           </div>
 
           {error && <div className="bg-danger/10 border border-danger/20 rounded-lg px-4 py-3 text-sm text-danger">{error}</div>}
