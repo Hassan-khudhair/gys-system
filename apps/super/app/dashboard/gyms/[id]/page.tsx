@@ -9,6 +9,7 @@ import {
   Building2, Users, CheckCircle2, AlertTriangle, Phone, Mail, MapPin,
   ArrowLeft, Clock, Loader2,
 } from "lucide-react";
+import { Pagination } from "../../../../components/pagination";
 import Link from "next/link";
 import type { Player } from "@gym/lib";
 import type { GymSummary } from "@gym/lib";
@@ -20,6 +21,8 @@ export default function GymDetailPage() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [notFoundState, setNotFoundState] = useState(false);
+  const [membersPage, setMembersPage] = useState(1);
+  const MEMBERS_PAGE_SIZE = 15;
 
   useEffect(() => {
     async function load() {
@@ -45,6 +48,9 @@ export default function GymDetailPage() {
       </div>
     );
   }
+
+  const membersTotalPages = Math.max(1, Math.ceil(players.length / MEMBERS_PAGE_SIZE));
+  const paginatedPlayers = players.slice((membersPage - 1) * MEMBERS_PAGE_SIZE, membersPage * MEMBERS_PAGE_SIZE);
 
   const STATUS_CLS = {
     active:    "bg-success/10 text-success border-success/20",
@@ -129,8 +135,10 @@ export default function GymDetailPage() {
                     <td colSpan={6} className="px-5 py-10 text-center text-muted text-sm">{t("no_members_gym")}</td>
                   </tr>
                 )}
-                {players.map((player) => {
-                  const { status, label, daysText } = getPlayerStatus(player.end_date);
+                {paginatedPlayers.map((player) => {
+                  const { status, daysLeft } = getPlayerStatus(player.end_date);
+                  const label = status === "expired" ? t("expired") : status === "expiring" ? t("expiring_soon") : t("active");
+                  const daysText = status === "expired" ? `${Math.abs(daysLeft)}${t("days_ago")}` : `${daysLeft}${t("days_left")}`;
                   return (
                     <tr key={player.id} className="hover:bg-surface-2/60 transition-colors">
                       <td className="px-5 py-3.5 font-medium text-text">{player.name}</td>
@@ -159,8 +167,10 @@ export default function GymDetailPage() {
             {players.length === 0 && (
               <div className="px-5 py-10 text-center text-muted text-sm">{t("no_members_gym")}</div>
             )}
-            {players.map((player) => {
-              const { status, label, daysText } = getPlayerStatus(player.end_date);
+            {paginatedPlayers.map((player) => {
+              const { status, daysLeft } = getPlayerStatus(player.end_date);
+              const label = status === "expired" ? t("expired") : status === "expiring" ? t("expiring_soon") : t("active");
+              const daysText = status === "expired" ? `${Math.abs(daysLeft)}${t("days_ago")}` : `${daysLeft}${t("days_left")}`;
               return (
                 <div key={player.id} className="p-4 space-y-3">
                   <div className="flex items-center justify-between">
@@ -192,6 +202,8 @@ export default function GymDetailPage() {
               );
             })}
           </div>
+
+          <Pagination page={membersPage} totalPages={membersTotalPages} onPage={setMembersPage} />
         </div>
       </div>
     </div>

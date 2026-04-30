@@ -15,8 +15,6 @@ export function formatDateShort(dateStr: string): string {
 
 export interface PlayerStatusInfo {
   status: PlayerStatus;
-  label: string;
-  daysText: string;
   daysLeft: number;
 }
 
@@ -26,28 +24,9 @@ export function getPlayerStatus(endDate: string): PlayerStatusInfo {
   const end = parseISO(endDate);
   const daysLeft = differenceInDays(end, today);
 
-  if (daysLeft < 0) {
-    return {
-      status: "expired",
-      label: "Expired",
-      daysText: `${Math.abs(daysLeft)}d ago`,
-      daysLeft,
-    };
-  }
-  if (daysLeft <= 7) {
-    return {
-      status: "expiring",
-      label: "Expiring Soon",
-      daysText: `${daysLeft}d left`,
-      daysLeft,
-    };
-  }
-  return {
-    status: "active",
-    label: "Active",
-    daysText: `${daysLeft}d left`,
-    daysLeft,
-  };
+  if (daysLeft < 0) return { status: "expired", daysLeft };
+  if (daysLeft <= 7) return { status: "expiring", daysLeft };
+  return { status: "active", daysLeft };
 }
 
 export const SUBSCRIPTION_LABELS: Record<string, string> = {
