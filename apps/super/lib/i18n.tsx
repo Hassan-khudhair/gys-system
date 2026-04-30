@@ -125,7 +125,6 @@ const ar = {
   col_subscription: "الاشتراك",
   col_start: "البداية",
   col_end: "النهاية",
-  col_status: "الحالة",
 
   // theme / language
   dark: "داكن",
@@ -249,7 +248,6 @@ const en: typeof ar = {
   col_subscription: "Subscription",
   col_start: "Start",
   col_end: "End",
-  col_status: "Status",
 };
 
 type T = typeof ar;
