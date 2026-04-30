@@ -63,6 +63,7 @@ const ar = {
   sub_quarterly: "ربع سنوي (3 أشهر)",
   sub_semi_annual: "نصف سنوي (6 أشهر)",
   sub_annual: "سنوي (12 شهراً)",
+  renew: "تجديد",
 
   // table
   col_player: "العضو",
@@ -199,6 +200,7 @@ const en: typeof ar = {
   sub_quarterly: "Quarterly (3 months)",
   sub_semi_annual: "Semi-Annual (6 months)",
   sub_annual: "Annual (12 months)",
+  renew: "Renew",
 
   col_player: "Player",
   col_phone: "Phone",

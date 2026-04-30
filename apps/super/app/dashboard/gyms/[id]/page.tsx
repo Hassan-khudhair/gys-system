@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams, notFound } from "next/navigation";
-import { createClient } from "../../../../../lib/supabase/client";
-import { useLocale } from "../../../../../lib/i18n";
+import { createClient } from "../../../../lib/supabase/client";
+import { useLocale } from "../../../../lib/i18n";
 import { formatDate, formatDateShort, getPlayerStatus } from "@gym/lib";
 import {
   Building2, Users, CheckCircle2, AlertTriangle, Phone, Mail, MapPin,
