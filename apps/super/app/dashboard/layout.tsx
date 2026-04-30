@@ -1,12 +1,15 @@
-import { Sidebar } from "../../components/sidebar";
+import { createClient } from "../../lib/supabase/server";
+import { DashboardShell } from "../../components/dashboard-shell";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+
+  const adminName = user?.user_metadata?.full_name ?? user?.email?.split("@")[0] ?? "Super Admin";
+
   return (
-    <div className="flex h-full min-h-screen">
-      <Sidebar />
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {children}
-      </div>
-    </div>
+    <DashboardShell adminName={adminName} email={user?.email}>
+      {children}
+    </DashboardShell>
   );
 }
