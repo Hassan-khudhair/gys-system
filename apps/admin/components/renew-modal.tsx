@@ -5,6 +5,7 @@ import { X, Loader2, RefreshCw } from "lucide-react";
 import { createClient } from "../lib/supabase/client";
 import { useLocale } from "../lib/i18n";
 import { useAdmin } from "../lib/admin-context";
+import { useToast } from "./toast";
 import type { Player, ExerciseType } from "@gym/lib";
 
 interface Props {
@@ -24,6 +25,7 @@ function addMonths(dateStr: string, months: number) {
 
 export function RenewModal({ open, player, gymId, onClose, onSaved }: Props) {
   const { t } = useLocale();
+  const { toast } = useToast();
   const { plans: allPlans } = useAdmin();
   const activePlans = allPlans.filter((p) => p.is_active);
 
@@ -107,6 +109,7 @@ export function RenewModal({ open, player, gymId, onClose, onSaved }: Props) {
 
     if (err) { setError(err.message); setLoading(false); return; }
     setLoading(false);
+    toast(t("toast_renewed"));
     onSaved();
     onClose();
   }

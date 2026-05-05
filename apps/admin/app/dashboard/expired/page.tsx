@@ -7,12 +7,16 @@ import { useAdmin } from "../../../lib/admin-context";
 import { PlayersTable } from "../../../components/players-table";
 import { PlayerModal } from "../../../components/player-modal";
 import { RenewModal } from "../../../components/renew-modal";
+import { useToast } from "../../../components/toast";
+import { useConfirm } from "../../../components/confirm-dialog";
 import type { Player } from "@gym/lib";
 
 const PAGE_SIZE = 15;
 
 export default function ExpiredPage() {
   const { t } = useLocale();
+  const { toast } = useToast();
+  const { confirm } = useConfirm();
   const { gymId } = useAdmin();
 
   const [players, setPlayers] = useState<Player[]>([]);
@@ -52,9 +56,16 @@ export default function ExpiredPage() {
   useEffect(() => { load(); }, [load]);
 
   async function handleDelete(player: Player) {
-    if (!confirm(`Remove "${player.name}"?`)) return;
+    const ok = await confirm({
+      title: t("confirm_delete"),
+      message: t("confirm_delete_player_msg"),
+      confirmLabel: t("delete_btn"),
+      variant: "danger",
+    });
+    if (!ok) return;
     const supabase = createClient();
     await supabase.from("players").delete().eq("id", player.id);
+    toast(t("toast_deleted"));
     load();
   }
 
