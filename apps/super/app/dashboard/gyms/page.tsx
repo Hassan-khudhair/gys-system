@@ -6,12 +6,16 @@ import { createClient } from "../../../lib/supabase/client";
 import { useLocale } from "../../../lib/i18n";
 import { GymsTable } from "../../../components/gyms-table";
 import { GymModal } from "../../../components/gym-modal";
+import { useToast } from "../../../components/toast";
+import { useConfirm } from "../../../components/confirm-dialog";
 import type { GymSummary } from "@gym/lib";
 
 const PAGE_SIZE = 12;
 
 export default function GymsPage() {
   const { t } = useLocale();
+  const { toast } = useToast();
+  const { confirm } = useConfirm();
   const [gyms, setGyms] = useState<GymSummary[]>([]);
   const [totalCount, setTotalCount] = useState(0);
   const [loading, setLoading] = useState(true);
@@ -45,9 +49,16 @@ export default function GymsPage() {
   useEffect(() => { load(); }, [load]);
 
   async function handleDelete(gym: GymSummary) {
-    if (!confirm(`Delete "${gym.name}"?`)) return;
+    const ok = await confirm({
+      title: t("confirm_delete"),
+      message: t("confirm_delete_gym_msg"),
+      confirmLabel: t("delete_btn"),
+      variant: "danger",
+    });
+    if (!ok) return;
     const supabase = createClient();
     await supabase.from("gyms").delete().eq("id", gym.id);
+    toast(t("toast_deleted"));
     load();
   }
 

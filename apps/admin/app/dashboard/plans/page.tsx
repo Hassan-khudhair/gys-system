@@ -6,6 +6,8 @@ import { useLocale } from "../../../lib/i18n";
 import { useAdmin } from "../../../lib/admin-context";
 import { PlanModal } from "../../../components/plan-modal";
 import { Pagination } from "../../../components/pagination";
+import { useToast } from "../../../components/toast";
+import { useConfirm } from "../../../components/confirm-dialog";
 import { Tag, Plus, Pencil, Trash2, Loader2, CheckCircle, XCircle } from "lucide-react";
 import type { SubscriptionPlan, ExerciseType } from "@gym/lib";
 
@@ -14,6 +16,8 @@ const TABS = ["all", "fitness", "bodybuilding"] as const;
 
 export default function PlansPage() {
   const { t } = useLocale();
+  const { toast } = useToast();
+  const { confirm } = useConfirm();
   const { gymId, plans, plansLoading, reloadPlans } = useAdmin();
   const [tab, setTab] = useState<(typeof TABS)[number]>("all");
   const [page, setPage] = useState(1);
@@ -26,9 +30,16 @@ export default function PlansPage() {
   function openEdit(plan: SubscriptionPlan) { setEditPlan(plan); setModalOpen(true); }
 
   async function deletePlan(plan: SubscriptionPlan) {
-    if (!confirm(t("confirm_delete_plan"))) return;
+    const ok = await confirm({
+      title: t("confirm_delete"),
+      message: t("confirm_delete_plan_msg"),
+      confirmLabel: t("delete_btn"),
+      variant: "danger",
+    });
+    if (!ok) return;
     const supabase = createClient();
     await supabase.from("subscription_plans").delete().eq("id", plan.id);
+    toast(t("toast_deleted"));
     reloadPlans();
   }
 

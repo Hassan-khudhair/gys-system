@@ -5,6 +5,7 @@ import { X, Loader2 } from "lucide-react";
 import { createClient } from "../lib/supabase/client";
 import { useLocale } from "../lib/i18n";
 import { useAdmin } from "../lib/admin-context";
+import { useToast } from "./toast";
 import type { Player, ExerciseType } from "@gym/lib";
 
 interface Props {
@@ -24,6 +25,7 @@ function addMonths(dateStr: string, months: number) {
 
 export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
   const { t } = useLocale();
+  const { toast } = useToast();
   const { plans: allPlans } = useAdmin(); // plans already fetched once in context
   const isEdit = Boolean(player);
   const [form, setForm] = useState({
@@ -127,7 +129,9 @@ export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
       ({ error: err } = await supabase.from("players").insert(payload));
     }
     if (err) { setError(err.message); setLoading(false); return; }
-    setLoading(false); onSaved(); onClose();
+    setLoading(false);
+    toast(isEdit ? t("toast_saved") : t("toast_added"));
+    onSaved(); onClose();
   }
 
   const inputCls = "w-full bg-bg border border-border text-text rounded-lg px-3.5 py-2.5 text-sm placeholder:text-faint focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors";

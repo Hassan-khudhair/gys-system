@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { X, Loader2 } from "lucide-react";
 import { createClient } from "../lib/supabase/client";
 import { useLocale } from "../lib/i18n";
+import { useToast } from "./toast";
 import type { SubscriptionPlan, ExerciseType } from "@gym/lib";
 
 interface Props {
@@ -16,6 +17,7 @@ interface Props {
 
 export function PlanModal({ open, plan, gymId, onClose, onSaved }: Props) {
   const { t } = useLocale();
+  const { toast } = useToast();
   const isEdit = Boolean(plan);
   const [form, setForm] = useState({
     name: "",
@@ -67,7 +69,9 @@ export function PlanModal({ open, plan, gymId, onClose, onSaved }: Props) {
       ({ error: err } = await supabase.from("subscription_plans").insert(payload));
     }
     if (err) { setError(err.message); setLoading(false); return; }
-    setLoading(false); onSaved(); onClose();
+    setLoading(false);
+    toast(isEdit ? t("toast_saved") : t("toast_added"));
+    onSaved(); onClose();
   }
 
   const inputCls = "w-full bg-bg border border-border text-text rounded-lg px-3.5 py-2.5 text-sm placeholder:text-faint focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-colors";
@@ -139,7 +143,7 @@ export function PlanModal({ open, plan, gymId, onClose, onSaved }: Props) {
               onClick={() => set("is_active", !form.is_active)}
               className={`relative w-10 h-5 rounded-full transition-colors ${form.is_active ? "bg-primary" : "bg-border"}`}
             >
-              <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${form.is_active ? "inset-s-[22px]" : "inset-s-0.5"}`} />
+              <span className={`absolute top-0.5 w-4 h-4 rounded-full bg-white shadow transition-all ${form.is_active ? "inset-s-5.5" : "inset-s-0.5"}`} />
             </button>
             <span className="text-sm text-text">{form.is_active ? t("plan_active") : t("plan_inactive")}</span>
           </div>

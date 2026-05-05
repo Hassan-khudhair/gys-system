@@ -5,6 +5,8 @@ import { useLocale } from "../../../lib/i18n";
 import { formatDate } from "@gym/lib";
 import type { GymApplication } from "@gym/lib";
 import { createClient } from "../../../lib/supabase/client";
+import { useToast } from "../../../components/toast";
+import { useConfirm } from "../../../components/confirm-dialog";
 import { Clock, CheckCircle2, XCircle, Building2, Mail, Phone, MapPin, Loader2, AlertCircle } from "lucide-react";
 import { Pagination } from "../../../components/pagination";
 
@@ -65,6 +67,8 @@ function RejectModal({
 
 export default function ApplicationsPage() {
   const { t } = useLocale();
+  const { toast } = useToast();
+  const { confirm } = useConfirm();
   const [applications, setApplications] = useState<GymApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("pending");
@@ -82,11 +86,17 @@ export default function ApplicationsPage() {
   useEffect(() => { load(); }, [load]);
 
   async function handleApprove(app: GymApplication) {
-    if (!confirm(`Approve "${app.gym_name}"?`)) return;
+    const ok = await confirm({
+      title: t("confirm_approve_title"),
+      message: t("confirm_approve_msg"),
+      confirmLabel: t("confirm_btn"),
+    });
+    if (!ok) return;
     setApproving(app.id);
     const supabase = createClient();
     const { error } = await supabase.rpc("approve_gym_application", { application_id: app.id });
-    if (error) alert(error.message);
+    if (error) { toast(error.message, "error"); }
+    else { toast(t("toast_gym_approved")); }
     setApproving(null);
     load();
   }
@@ -96,7 +106,8 @@ export default function ApplicationsPage() {
     const { error } = await supabase.from("gym_applications").update({
       status: "rejected", rejection_reason: reason || null, reviewed_at: new Date().toISOString(),
     }).eq("id", applicationId);
-    if (error) alert(error.message);
+    if (error) { toast(error.message, "error"); }
+    else { toast(t("toast_gym_rejected")); }
     load();
   }
 
