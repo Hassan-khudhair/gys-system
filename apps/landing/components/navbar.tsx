@@ -113,8 +113,11 @@ export function Navbar() {
           <a href={REGISTER_URL}
             className="block text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-xl text-center mt-3 transition-colors">
             {t("nav_register_btn")} 
-            <ArrowLeft className="w-4 h-4 inline-block ms-1" />
-            <ArrowRight className="w-4 h-4 inline-block ms-1" />
+            {locale === "en" ? (
+              <ArrowRight className="w-4 h-4 inline-block ms-1" />
+            ) : (
+              <ArrowLeft className="w-4 h-4 inline-block ms-1" />
+            )}
           </a>
         </div>
       )}
