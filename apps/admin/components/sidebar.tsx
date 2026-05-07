@@ -1,8 +1,9 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, UserX, LogOut, Dumbbell, X, Tag } from "lucide-react";
+import { LayoutDashboard, Users, UserX, LogOut, X, Tag } from "lucide-react";
 import { createClient } from "../lib/supabase/client";
 import { useLocale } from "../lib/i18n";
 
@@ -35,11 +36,11 @@ export function Sidebar({ gymName, onClose }: SidebarProps) {
       {/* Logo */}
       <div className="px-5 py-6 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 bg-primary rounded-xl flex items-center justify-center shadow-md shadow-primary/30">
-            <Dumbbell className="w-5 h-5 text-white" />
+          <div className="w-10 h-10 rounded-xl overflow-hidden bg-white shadow-md shadow-primary/20 shrink-0 flex items-center justify-center">
+            <Image src="/logo.png" alt="Mr. Gym" width={40} height={40} className="object-contain w-full h-full" />
           </div>
           <div>
-            <p className="text-sm font-bold text-text leading-tight">Master Gym</p>
+            <p className="text-sm font-bold text-text leading-tight">Mr. Gym</p>
             <p className="text-[10px] text-primary uppercase tracking-widest font-medium mt-0.5 truncate max-w-[120px]">
               {gymName ?? "Admin Panel"}
             </p>

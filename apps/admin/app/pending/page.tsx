@@ -57,7 +57,7 @@ export default function PendingPage() {
           <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary/30">
             <Dumbbell className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-xl font-bold text-text">Master Gym</h1>
+          <h1 className="text-xl font-bold text-text">Mr. Gym</h1>
         </div>
 
         <div className="bg-surface border border-border rounded-2xl p-8 text-center transition-colors">
@@ -76,8 +76,8 @@ export default function PendingPage() {
               )}
               <p className="text-faint text-xs">
                 {t("contact_admin")}{" "}
-                <a href="mailto:support@mastergym.com" className="text-primary hover:underline">
-                  support@mastergym.com
+                <a href="mailto:support@mrgym.com" className="text-primary hover:underline">
+                  support@mrgym.com
                 </a>
               </p>
             </>

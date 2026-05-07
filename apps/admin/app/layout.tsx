@@ -10,8 +10,8 @@ const tajawal = Tajawal({
 });
 
 export const metadata: Metadata = {
-  title: "Master Gym — Admin Panel",
-  description: "Master Gym member management panel",
+  title: "Mr. Gym — Admin Panel",
+  description: "Mr. Gym member management panel",
   icons: { icon: "/icon.svg" },
 };
 

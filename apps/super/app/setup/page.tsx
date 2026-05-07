@@ -78,7 +78,7 @@ export default function SetupPage() {
             <div>
               <label className="block text-xs font-medium text-muted mb-1.5">{t("email_label")}</label>
               <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} required
-                placeholder="superadmin@mastergym.com" className={inputCls} />
+                placeholder="superadmin@mrgym.com" className={inputCls} />
             </div>
             <div>
               <label className="block text-xs font-medium text-muted mb-1.5">{t("password")}</label>
