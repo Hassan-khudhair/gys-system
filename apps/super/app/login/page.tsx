@@ -34,7 +34,7 @@ export default function LoginPage() {
           <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary/30">
             <Dumbbell className="w-8 h-8 text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-text tracking-tight">Master Gym</h1>
+          <h1 className="text-2xl font-bold text-text tracking-tight">Mr. Gym</h1>
           <p className="text-muted text-sm mt-1">{t("super_admin_panel")}</p>
         </div>
 
@@ -44,7 +44,7 @@ export default function LoginPage() {
             <div>
               <label className="block text-sm font-medium text-muted mb-1.5">{t("email_label")}</label>
               <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required
-                placeholder="admin@mastergym.com" className={inputCls} />
+                placeholder="admin@mrgym.com" className={inputCls} />
             </div>
             <div>
               <label className="block text-sm font-medium text-muted mb-1.5">{t("password_label")}</label>
@@ -68,7 +68,7 @@ export default function LoginPage() {
         </div>
 
         <p className="text-center text-faint text-xs mt-6" suppressHydrationWarning>
-          © {new Date().getFullYear()} Master Gym. {t("copyright")}
+          © {new Date().getFullYear()} Mr. Gym. {t("copyright")}
         </p>
       </div>
     </div>
