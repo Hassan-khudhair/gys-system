@@ -9,12 +9,12 @@ const FEATURES = [
     icon: DoorOpen,
     titleKey: "ff1_title" as const,
     descKey: "ff1_desc" as const,
-    gradient: "from-violet-500/15 to-purple-600/5",
-    border: "border-violet-500/20",
-    iconBg: "bg-violet-500/10",
-    iconColor: "text-violet-400",
-    glow: "hover:shadow-violet-500/10",
-    line: "via-violet-500/30",
+    gradient: "from-[#00748e]/15 to-[#078fa7]/5",
+    border: "border-[#00748e]/20",
+    iconBg: "bg-[#00748e]/10",
+    iconColor: "text-[#00b6cc]",
+    glow: "hover:shadow-[#00748e]/10",
+    line: "via-[#00748e]/30",
   },
   {
     icon: ScanFace,
@@ -76,25 +76,25 @@ export function FutureFeatures() {
   return (
     <section ref={ref} id="future" className="relative py-28 overflow-hidden">
       {/* Background */}
-      <div className="absolute inset-0 bg-[#04040e]" />
-      <div className="absolute inset-0 bg-linear-to-b from-transparent via-indigo-950/8 to-transparent" />
+      <div className="absolute inset-0 bg-[#040d10]" />
+      <div className="absolute inset-0 bg-linear-to-b from-transparent via-[#030d10]/8 to-transparent" />
 
       {/* Subtle grid */}
       <div
         className="absolute inset-0 opacity-[0.025]"
         style={{
-          backgroundImage: `linear-gradient(rgba(99,102,241,1) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,1) 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(rgba(0,116,142,1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,116,142,1) 1px, transparent 1px)`,
           backgroundSize: "64px 64px",
         }}
       />
 
       {/* Ambient blob */}
-      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-192 h-64 bg-indigo-600/5 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-192 h-64 bg-[#00748e]/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-6">
         {/* Header */}
         <div className="text-center mb-16 reveal" data-delay="0">
-          <div className="inline-flex items-center gap-2 bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold px-4 py-2 rounded-full mb-6 tracking-widest uppercase">
+          <div className="inline-flex items-center gap-2 bg-[#00748e]/10 border border-[#00748e]/20 text-[#00b6cc] text-xs font-bold px-4 py-2 rounded-full mb-6 tracking-widest uppercase">
             <Sparkles className="w-3.5 h-3.5" />
             {t("future_badge")}
           </div>

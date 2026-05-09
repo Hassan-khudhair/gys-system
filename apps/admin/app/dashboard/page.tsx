@@ -7,7 +7,7 @@ import { useAdmin } from "../../lib/admin-context";
 import { StatsCard } from "../../components/stats-card";
 import { DonutChart, HBarChart, Legend } from "../../components/charts";
 import { formatDateShort } from "@gym/lib";
-import { Users, CheckCircle2, XCircle, AlertTriangle, Clock, Banknote, TrendingUp } from "lucide-react";
+import { Users, CheckCircle2, XCircle, AlertTriangle, Clock, Banknote, TrendingUp, Tag, Dumbbell } from "lucide-react";
 import Link from "next/link";
 import type { Player } from "@gym/lib";
 
@@ -29,6 +29,8 @@ export default function DashboardPage() {
   const { gymId } = useAdmin();
   const [stats, setStats] = useState<GymStats | null>(null);
   const [expiringPlayers, setExpiringPlayers] = useState<Player[]>([]);
+  const [plansCount, setPlansCount] = useState(0);
+  const [exerciseTypesCount, setExerciseTypesCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
@@ -37,8 +39,7 @@ export default function DashboardPage() {
     const today = new Date().toISOString().slice(0, 10);
     const sevenDaysLater = new Date(Date.now() + 7 * 86400000).toISOString().slice(0, 10);
 
-    // ONE RPC call replaces 5+ separate count queries
-    const [{ data: statsData }, { data: expPlayers }] = await Promise.all([
+    const [{ data: statsData }, { data: expPlayers }, { count: plans }, { count: exTypes }] = await Promise.all([
       supabase.rpc("get_gym_stats", { p_gym_id: gymId }),
       supabase.from("players").select("id,name,phone,end_date")
         .eq("gym_id", gymId)
@@ -46,10 +47,14 @@ export default function DashboardPage() {
         .lte("end_date", sevenDaysLater)
         .order("end_date")
         .limit(10),
+      supabase.from("subscription_plans").select("*", { count: "exact", head: true }).eq("gym_id", gymId),
+      supabase.from("exercise_types").select("*", { count: "exact", head: true }).eq("gym_id", gymId),
     ]);
 
     setStats(statsData as GymStats);
     setExpiringPlayers((expPlayers ?? []) as unknown as Player[]);
+    setPlansCount(plans ?? 0);
+    setExerciseTypesCount(exTypes ?? 0);
     setLoading(false);
   }, [gymId]);
 
@@ -114,8 +119,8 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard title={t("total_revenue")}        value={fmtCurrency(stats?.total_revenue ?? 0)}        icon={Banknote}  iconColor="text-primary" iconBg="bg-primary/15" />
           <StatsCard title={t("monthly_revenue")}      value={fmtCurrency(stats?.monthly_revenue ?? 0)}      icon={TrendingUp} iconColor="text-success" iconBg="bg-success/15" />
-          <StatsCard title={t("fitness_revenue")}      value={fmtCurrency(stats?.fitness_revenue ?? 0)}      icon={Users} iconColor="text-[#38BDF8]" iconBg="bg-[#38BDF8]/15" />
-          <StatsCard title={t("bodybuilding_revenue")} value={fmtCurrency(stats?.bodybuilding_revenue ?? 0)} icon={Users} iconColor="text-warning"   iconBg="bg-warning/15" />
+          <StatsCard title={t("total_plans")}          value={plansCount}         icon={Tag}     iconColor="text-[#00b6cc]" iconBg="bg-[#00b6cc]/15" />
+          <StatsCard title={t("total_exercise_types")} value={exerciseTypesCount} icon={Dumbbell} iconColor="text-warning"   iconBg="bg-warning/15" />
         </div>
 
         {/* Charts row */}

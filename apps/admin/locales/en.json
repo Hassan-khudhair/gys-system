@@ -166,6 +166,8 @@
   "monthly_revenue": "This Month Revenue",
   "fitness_revenue": "Fitness Revenue",
   "bodybuilding_revenue": "Bodybuilding Revenue",
+  "total_plans": "Subscription Plans",
+  "total_exercise_types": "Exercise Types",
   "currency": "IQD",
 
   "loading": "Loading…",

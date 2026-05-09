@@ -36,10 +36,10 @@ export function Sidebar({ onClose }: SidebarProps) {
       className="w-56 shrink-0 flex flex-col h-screen sticky top-0 border-e border-border/30 transition-colors overflow-hidden"
       style={{ backgroundColor: "var(--color-sidebar)" }}
     >
-      {/* Top atmospheric glow — violet */}
+      {/* Top atmospheric glow — teal */}
       <div
         className="absolute top-0 inset-x-0 h-56 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% -20%, rgba(139,92,246,0.13) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(ellipse at 50% -20%, rgba(0,182,204,0.13) 0%, transparent 70%)" }}
       />
 
       {/* Large faded Dumbbell — brand watermark */}
@@ -52,11 +52,10 @@ export function Sidebar({ onClose }: SidebarProps) {
 
       {/* Logo header */}
       <div className="relative flex items-center gap-3 px-4 py-4 border-b border-border/25">
-        <div className="w-8 h-8 rounded-lg overflow-hidden ring-1 ring-white/8 shrink-0">
-          <Image src="/logo.png" alt="Mr. Gym" width={32} height={32} className="object-contain w-full h-full" />
+        <div className="w-16 h-12 rounded-lg overflow-hidden ring-1 ring-white/8 shrink-0">
+          <Image src="/logo.png" alt="FitNex" width={32} height={32} className="object-contain w-full h-full" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-semibold text-text leading-tight tracking-tight">Mr. Gym</p>
           <p className="text-[10px] text-primary font-medium truncate opacity-70 mt-0.5">
             {t("super_admin_role")}
           </p>

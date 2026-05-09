@@ -50,14 +50,14 @@ export function DashboardShell({ children, gymName, adminName, email, gymId = nu
             >
               <div
                 className="absolute left-1/2"
-                style={{ top: "calc(50vh - 28px)", transform: "translate(-50%, -50%)" }}
+                style={{ top: "calc(30vh - 28px)", transform: "translate(-50%, -50%)" }}
               >
                 <img
                   src="/logo.png"
                   alt=""
                   style={{
-                    width: "min(540px, 62vw)",
-                    height: "min(540px, 62vw)",
+                    width: "min(800px, 80vw)",
+                    height: "min(800px, 80vw)",
                     objectFit: "contain",
                     opacity: 0.06,
                     filter: "blur(1px)",
