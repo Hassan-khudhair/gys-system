@@ -17,6 +17,7 @@ interface Props {
   onEdit: (player: Player) => void;
   onDelete: (player: Player) => void;
   onRenew: (player: Player) => void;
+  filterStatus?: string;
 }
 
 const STATUS_CLASSES = {
