@@ -33,12 +33,39 @@ export function DashboardShell({ children, adminName, email }: Props) {
       </div>
 
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        <Header 
-          adminName={adminName} 
-          email={email} 
-          onMenuClick={() => setIsSidebarOpen(true)} 
+        <Header
+          adminName={adminName}
+          email={email}
+          onMenuClick={() => setIsSidebarOpen(true)}
         />
-        <main className="flex-1 overflow-y-auto">
+        <main className="relative flex-1 overflow-y-auto" data-main-scroll>
+          {/* Logo watermark — sticky anchor keeps it centered in the viewport as content scrolls */}
+          <div
+            aria-hidden="true"
+            className="sticky top-0 h-0 overflow-visible pointer-events-none select-none"
+            style={{ zIndex: 0 }}
+          >
+            <div
+              className="absolute left-1/2"
+              style={{ top: "calc(50vh - 28px)", transform: "translate(-50%, -50%)" }}
+            >
+              <img
+                src="/logo.png"
+                alt=""
+                style={{
+                  width: "min(540px, 62vw)",
+                  height: "min(540px, 62vw)",
+                  objectFit: "contain",
+                  opacity: 0.06,
+                  filter: "blur(1px)",
+                  maskImage: "radial-gradient(ellipse at center, black 20%, transparent 70%)",
+                  WebkitMaskImage: "radial-gradient(ellipse at center, black 20%, transparent 70%)",
+                }}
+              />
+            </div>
+          </div>
+          {/* Sentinel: header watches this to detect scroll */}
+          <div id="dashboard-scroll-sentinel" aria-hidden="true" className="h-px" />
           {children}
         </main>
       </div>

@@ -3,7 +3,14 @@
 export type GymStatus = "active" | "inactive" | "suspended";
 export type SubscriptionType = string; // free text: plan name or legacy type
 export type PlayerStatus = "active" | "expiring" | "expired";
-export type ExerciseType = "fitness" | "bodybuilding";
+export type ExerciseType = string;
+
+export interface ExerciseTypeRecord {
+  id: string;
+  gym_id: string;
+  name: string;
+  created_at: string;
+}
 
 export interface SubscriptionPlan {
   id: string;
@@ -53,7 +60,7 @@ export interface Player {
   gym_id: string;
   name: string;
   phone: string | null;
-  email: string | null;
+  age: number | null;
   notes: string | null;
   start_date: string;
   end_date: string;
@@ -98,7 +105,7 @@ export interface CreateGymInput {
 export interface CreatePlayerInput {
   name: string;
   phone?: string;
-  email?: string;
+  age?: number;
   notes?: string;
   start_date: string;
   end_date: string;

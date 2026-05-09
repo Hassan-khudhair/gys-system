@@ -1,35 +1,43 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg:           #0F172A;
-  --color-surface:      #1E293B;
-  --color-surface-2:    #263348;
-  --color-border:       #334155;
+  /* Deep navy-blue base — sky-inspired, violet primary */
+  --color-bg:           #07080e;
+  --color-sidebar:      #040508;
+  --color-surface:      #0d1018;
+  --color-surface-2:    #141b25;
+  --color-border:       #1d2636;
   --color-primary:      #8B5CF6;
-  --color-primary-dim:  rgba(139,92,246,0.15);
-  --color-text:         #F8FAFC;
-  --color-muted:        #94A3B8;
-  --color-faint:        #475569;
-  --color-success:      #22C55E;
-  --color-danger:       #EF4444;
-  --color-warning:      #F59E0B;
+  --color-primary-dim:  rgba(139,92,246,0.12);
+  --color-text:         #e2e9f3;
+  --color-muted:        #7a8a9e;
+  --color-faint:        #3a4558;
+  --color-success:      #22c55e;
+  --color-danger:       #ef4444;
+  --color-warning:      #f59e0b;
 
   --font-sans: var(--font-tajawal), system-ui, sans-serif;
 }
 
-/* Light theme overrides */
 [data-theme="light"] {
-  --color-bg:        #F1F5F9;
-  --color-surface:   #FFFFFF;
-  --color-surface-2: #F8FAFC;
-  --color-border:    #E2E8F0;
-  --color-text:      #0F172A;
-  --color-muted:     #64748B;
-  --color-faint:     #94A3B8;
+  --color-bg:        #f0f5ff;
+  --color-sidebar:   #e8f0ff;
+  --color-surface:   #ffffff;
+  --color-surface-2: #eaf0fb;
+  --color-border:    #d0daf0;
+  --color-text:      #0f172a;
+  --color-muted:     #5a6987;
+  --color-faint:     #9baac5;
 }
 
 html, body {
   background-color: var(--color-bg);
+  /* Dual atmospheric gradient — violet top-right + sky-blue bottom-left */
+  background-image:
+    radial-gradient(ellipse at 65% 0%,   rgba(139,92,246,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 5%  100%, rgba(56,189,248,0.04) 0%, transparent 45%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -38,9 +46,37 @@ html, body {
   transition: background-color 0.2s, color 0.2s;
 }
 
-::-webkit-scrollbar        { width: 5px; height: 5px; }
-::-webkit-scrollbar-track  { background: var(--color-surface); }
-::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 4px; }
+[data-theme="light"] body {
+  background-image:
+    radial-gradient(ellipse at 65% 0%,   rgba(139,92,246,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 5%  100%, rgba(56,189,248,0.04) 0%, transparent 40%);
+}
+
+/* Refined scrollbar */
+::-webkit-scrollbar        { width: 4px; height: 4px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-faint); }
 
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
 * { box-sizing: border-box; }
+
+@keyframes shimmer {
+  0%   { background-position: -400% 0; }
+  100% { background-position:  400% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface)   25%,
+    var(--color-surface-2) 50%,
+    var(--color-surface)   75%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}

@@ -5,7 +5,8 @@ import { X, Loader2 } from "lucide-react";
 import { createClient } from "../lib/supabase/client";
 import { useLocale } from "../lib/i18n";
 import { useToast } from "./toast";
-import type { SubscriptionPlan, ExerciseType } from "@gym/lib";
+import { useAdmin } from "../lib/admin-context";
+import type { SubscriptionPlan } from "@gym/lib";
 
 interface Props {
   open: boolean;
@@ -18,10 +19,11 @@ interface Props {
 export function PlanModal({ open, plan, gymId, onClose, onSaved }: Props) {
   const { t } = useLocale();
   const { toast } = useToast();
+  const { exerciseTypes } = useAdmin();
   const isEdit = Boolean(plan);
   const [form, setForm] = useState({
     name: "",
-    exercise_type: "fitness" as ExerciseType,
+    exercise_type: "",
     duration_months: "1",
     price: "",
     is_active: true,
@@ -39,10 +41,10 @@ export function PlanModal({ open, plan, gymId, onClose, onSaved }: Props) {
         is_active: plan.is_active,
       });
     } else {
-      setForm({ name: "", exercise_type: "fitness", duration_months: "1", price: "", is_active: true });
+      setForm({ name: "", exercise_type: exerciseTypes[0]?.name ?? "", duration_months: "1", price: "", is_active: true });
     }
     setError(null);
-  }, [plan, open]);
+  }, [plan, open, exerciseTypes]);
 
   if (!open) return null;
 
@@ -103,10 +105,15 @@ export function PlanModal({ open, plan, gymId, onClose, onSaved }: Props) {
 
           <div>
             <label className="block text-xs font-medium text-muted mb-1.5">{t("exercise_type_label")}</label>
-            <select value={form.exercise_type} onChange={(e) => set("exercise_type", e.target.value)} className={inputCls}>
-              <option value="fitness">{t("fitness")}</option>
-              <option value="bodybuilding">{t("bodybuilding")}</option>
-            </select>
+            {exerciseTypes.length === 0 ? (
+              <div className={`${inputCls} text-muted`}>{t("no_exercise_types_yet")}</div>
+            ) : (
+              <select value={form.exercise_type} onChange={(e) => set("exercise_type", e.target.value)} className={inputCls}>
+                {exerciseTypes.map((et) => (
+                  <option key={et.id} value={et.name}>{et.name}</option>
+                ))}
+              </select>
+            )}
           </div>
 
           <div className="grid grid-cols-2 gap-4">

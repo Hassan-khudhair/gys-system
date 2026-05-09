@@ -6,7 +6,7 @@ import { createClient } from "../lib/supabase/client";
 import { useLocale } from "../lib/i18n";
 import { useAdmin } from "../lib/admin-context";
 import { useToast } from "./toast";
-import type { Player, ExerciseType } from "@gym/lib";
+import type { Player } from "@gym/lib";
 
 interface Props {
   open: boolean;
@@ -26,15 +26,15 @@ function addMonths(dateStr: string, months: number) {
 export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
   const { t } = useLocale();
   const { toast } = useToast();
-  const { plans: allPlans } = useAdmin(); // plans already fetched once in context
+  const { plans: allPlans, exerciseTypes } = useAdmin();
   const isEdit = Boolean(player);
   const [form, setForm] = useState({
-    name: "", phone: "", email: "", notes: "",
+    name: "", phone: "", age: "", notes: "",
     start_date: todayStr(),
     end_date: addMonths(todayStr(), 1),
     subscription_type: "",
     amount_paid: "",
-    exercise_type: "fitness" as ExerciseType,
+    exercise_type: "",
     plan_id: "",
   });
   const [loading, setLoading] = useState(false);
@@ -47,26 +47,26 @@ export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
       setForm({
         name: player.name,
         phone: player.phone ?? "",
-        email: player.email ?? "",
+        age: player.age != null ? String(player.age) : "",
         notes: player.notes ?? "",
         start_date: player.start_date,
         end_date: player.end_date,
         subscription_type: player.subscription_type,
         amount_paid: player.amount_paid != null ? String(player.amount_paid) : "",
-        exercise_type: player.exercise_type ?? "fitness",
+        exercise_type: player.exercise_type ?? exerciseTypes[0]?.name ?? "",
         plan_id: player.plan_id ?? "",
       });
     } else {
       const today = todayStr();
       setForm({
-        name: "", phone: "", email: "", notes: "",
+        name: "", phone: "", age: "", notes: "",
         start_date: today, end_date: addMonths(today, 1),
         subscription_type: "", amount_paid: "",
-        exercise_type: "fitness", plan_id: "",
+        exercise_type: exerciseTypes[0]?.name ?? "", plan_id: "",
       });
     }
     setError(null);
-  }, [player, open]);
+  }, [player, open, exerciseTypes]);
 
   if (!open) return null;
 
@@ -113,7 +113,7 @@ export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
       gym_id: gymId,
       name: form.name.trim(),
       phone: form.phone.trim() || null,
-      email: form.email.trim() || null,
+      age: form.age ? parseInt(form.age) : null,
       notes: form.notes.trim() || null,
       start_date: form.start_date,
       end_date: form.end_date,
@@ -161,30 +161,39 @@ export function PlayerModal({ open, player, gymId, onClose, onSaved }: Props) {
               <input value={form.phone} onChange={(e) => set("phone", e.target.value)} placeholder="+964 7XX XXX XXXX" className={inputCls} />
             </div>
             <div>
-              <label className="block text-xs font-medium text-muted mb-1.5">{t("email")}</label>
-              <input type="email" value={form.email} onChange={(e) => set("email", e.target.value)} placeholder="player@email.com" className={inputCls} />
+              <label className="block text-xs font-medium text-muted mb-1.5">{t("age")}</label>
+              <input type="number" min="5" max="100" value={form.age} onChange={(e) => set("age", e.target.value)} placeholder={t("age_placeholder")} className={inputCls} />
             </div>
           </div>
 
           {/* Exercise type */}
           <div>
             <label className="block text-xs font-medium text-muted mb-2">{t("exercise_type_label")}</label>
-            <div className="grid grid-cols-2 gap-2">
-              {(["fitness", "bodybuilding"] as ExerciseType[]).map((et) => (
-                <button
-                  key={et}
-                  type="button"
-                  onClick={() => set("exercise_type", et)}
-                  className={`py-2.5 rounded-lg text-sm font-medium border transition-all ${
-                    form.exercise_type === et
-                      ? "bg-primary/15 border-primary text-primary"
-                      : "bg-bg border-border text-muted hover:text-text hover:border-border"
-                  }`}
-                >
-                  {et === "fitness" ? t("fitness") : t("bodybuilding")}
-                </button>
-              ))}
-            </div>
+            {exerciseTypes.length === 0 ? (
+              <div className="w-full bg-bg border border-border text-muted rounded-lg px-3.5 py-2.5 text-sm">
+                {t("no_exercise_types_yet")}
+              </div>
+            ) : (
+              <div
+                className="grid gap-2"
+                style={{ gridTemplateColumns: `repeat(${Math.min(exerciseTypes.length, 3)}, 1fr)` }}
+              >
+                {exerciseTypes.map((et) => (
+                  <button
+                    key={et.id}
+                    type="button"
+                    onClick={() => set("exercise_type", et.name)}
+                    className={`py-2.5 rounded-lg text-sm font-medium border transition-all ${
+                      form.exercise_type === et.name
+                        ? "bg-primary/15 border-primary text-primary"
+                        : "bg-bg border-border text-muted hover:text-text hover:border-border"
+                    }`}
+                  >
+                    {et.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Subscription plan */}

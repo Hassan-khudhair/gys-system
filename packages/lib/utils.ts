@@ -41,3 +41,19 @@ export const GYM_STATUS_LABELS: Record<string, string> = {
   inactive: "Inactive",
   suspended: "Suspended",
 };
+
+const EXERCISE_BADGE_PALETTE = [
+  "bg-[#38BDF8]/10 text-[#38BDF8] border-[#38BDF8]/20",
+  "bg-warning/10 text-warning border-warning/20",
+  "bg-success/10 text-success border-success/20",
+  "bg-[#A78BFA]/10 text-[#A78BFA] border-[#A78BFA]/20",
+  "bg-[#F472B6]/10 text-[#F472B6] border-[#F472B6]/20",
+];
+
+export function exerciseTypeBadgeClass(typeName: string): string {
+  let hash = 0;
+  for (let i = 0; i < typeName.length; i++) {
+    hash = (hash * 31 + typeName.charCodeAt(i)) & 0xffff;
+  }
+  return EXERCISE_BADGE_PALETTE[hash % EXERCISE_BADGE_PALETTE.length];
+}

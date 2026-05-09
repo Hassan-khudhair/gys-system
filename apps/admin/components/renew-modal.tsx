@@ -6,7 +6,7 @@ import { createClient } from "../lib/supabase/client";
 import { useLocale } from "../lib/i18n";
 import { useAdmin } from "../lib/admin-context";
 import { useToast } from "./toast";
-import type { Player, ExerciseType } from "@gym/lib";
+import type { Player } from "@gym/lib";
 
 interface Props {
   open: boolean;
@@ -26,10 +26,10 @@ function addMonths(dateStr: string, months: number) {
 export function RenewModal({ open, player, gymId, onClose, onSaved }: Props) {
   const { t } = useLocale();
   const { toast } = useToast();
-  const { plans: allPlans } = useAdmin();
+  const { plans: allPlans, exerciseTypes } = useAdmin();
   const activePlans = allPlans.filter((p) => p.is_active);
 
-  const [exerciseType, setExerciseType] = useState<ExerciseType>("fitness");
+  const [exerciseType, setExerciseType] = useState("");
   const [planId, setPlanId] = useState("");
   const [startDate, setStartDate] = useState(todayStr());
   const [endDate, setEndDate] = useState(addMonths(todayStr(), 1));
@@ -40,7 +40,7 @@ export function RenewModal({ open, player, gymId, onClose, onSaved }: Props) {
   useEffect(() => {
     if (!open || !player) return;
     const today = todayStr();
-    const et: ExerciseType = player.exercise_type ?? "fitness";
+    const et = player.exercise_type ?? exerciseTypes[0]?.name ?? "";
     setExerciseType(et);
     setStartDate(today);
     setError(null);
@@ -56,13 +56,13 @@ export function RenewModal({ open, player, gymId, onClose, onSaved }: Props) {
       setAmountPaid("");
       setEndDate(addMonths(today, 1));
     }
-  }, [open, player]);
+  }, [open, player, exerciseTypes]);
 
   if (!open || !player) return null;
 
   const filteredPlans = activePlans.filter((p) => p.exercise_type === exerciseType);
 
-  function handleExerciseType(et: ExerciseType) {
+  function handleExerciseType(et: string) {
     setExerciseType(et);
     setPlanId("");
     setAmountPaid("");
@@ -145,22 +145,31 @@ export function RenewModal({ open, player, gymId, onClose, onSaved }: Props) {
           {/* Exercise type */}
           <div>
             <label className="block text-xs font-medium text-muted mb-2">{t("exercise_type_label")}</label>
-            <div className="grid grid-cols-2 gap-2">
-              {(["fitness", "bodybuilding"] as ExerciseType[]).map((et) => (
-                <button
-                  key={et}
-                  type="button"
-                  onClick={() => handleExerciseType(et)}
-                  className={`py-2.5 rounded-lg text-sm font-medium border transition-all ${
-                    exerciseType === et
-                      ? "bg-primary/15 border-primary text-primary"
-                      : "bg-bg border-border text-muted hover:text-text hover:border-border"
-                  }`}
-                >
-                  {et === "fitness" ? t("fitness") : t("bodybuilding")}
-                </button>
-              ))}
-            </div>
+            {exerciseTypes.length === 0 ? (
+              <div className="w-full bg-bg border border-border text-muted rounded-lg px-3.5 py-2.5 text-sm">
+                {t("no_exercise_types_yet")}
+              </div>
+            ) : (
+              <div
+                className="grid gap-2"
+                style={{ gridTemplateColumns: `repeat(${Math.min(exerciseTypes.length, 3)}, 1fr)` }}
+              >
+                {exerciseTypes.map((et) => (
+                  <button
+                    key={et.id}
+                    type="button"
+                    onClick={() => handleExerciseType(et.name)}
+                    className={`py-2.5 rounded-lg text-sm font-medium border transition-all ${
+                      exerciseType === et.name
+                        ? "bg-primary/15 border-primary text-primary"
+                        : "bg-bg border-border text-muted hover:text-text hover:border-border"
+                    }`}
+                  >
+                    {et.name}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Plan selection */}
