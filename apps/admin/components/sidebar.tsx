@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { LayoutDashboard, Users, UserX, LogOut, X, Tag } from "lucide-react";
+import { LayoutDashboard, Users, UserX, LogOut, X, Tag, Dumbbell } from "lucide-react";
 import { createClient } from "../lib/supabase/client";
 import { useLocale } from "../lib/i18n";
 
@@ -20,8 +20,9 @@ export function Sidebar({ gymName, onClose }: SidebarProps) {
   const navItems = [
     { href: "/dashboard",          label: t("nav_dashboard"),    icon: LayoutDashboard, exact: true },
     { href: "/dashboard/players",  label: t("nav_all_players"),  icon: Users,           exact: false },
-    { href: "/dashboard/expired",  label: t("nav_expired"),      icon: UserX,           exact: false },
-    { href: "/dashboard/plans",    label: t("nav_plans"),        icon: Tag,             exact: false },
+    { href: "/dashboard/expired",          label: t("nav_expired"),          icon: UserX,     exact: false },
+    { href: "/dashboard/exercise-types",   label: t("nav_exercise_types"),   icon: Dumbbell,  exact: false },
+    { href: "/dashboard/plans",            label: t("nav_plans"),            icon: Tag,       exact: false },
   ];
 
   async function handleLogout() {

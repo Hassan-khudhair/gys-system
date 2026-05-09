@@ -39,7 +39,8 @@
   "edit_player_title": "تعديل بيانات العضو",
   "full_name": "الاسم الكامل",
   "phone": "رقم الهاتف",
-  "email": "البريد الإلكتروني",
+  "age": "العمر",
+  "age_placeholder": "مثال: 25",
   "subscription_type": "نوع الاشتراك",
   "start_date": "تاريخ البداية",
   "end_date": "تاريخ الانتهاء",
@@ -186,5 +187,19 @@
   "confirm_delete": "تأكيد الحذف",
   "confirm_delete_player_msg": "هل أنت متأكد من حذف هذا العضو؟ لا يمكن التراجع عن هذا الإجراء.",
   "confirm_delete_plan_msg": "هل أنت متأكد من حذف هذه الخطة؟ لا يمكن التراجع عن هذا الإجراء.",
-  "delete_btn": "حذف"
+  "delete_btn": "حذف",
+
+  "nav_exercise_types": "أنواع التمرين",
+  "exercise_types_title": "أنواع التمرين",
+  "exercise_types_subtitle": "إدارة أنواع التمرين المتاحة في صالتك",
+  "add_exercise_type": "إضافة نوع",
+  "edit_exercise_type": "تعديل النوع",
+  "exercise_type_name_label": "اسم النوع",
+  "exercise_type_name_placeholder": "مثال: يوغا، كروس فيت، سباحة",
+  "no_exercise_types": "لا توجد أنواع تمرين بعد. أضف النوع الأول.",
+  "no_exercise_types_yet": "لم يتم إعداد أي أنواع تمرين بعد.",
+  "exercise_type_duplicate": "اسم نوع التمرين هذا موجود بالفعل.",
+  "created_at_label": "تاريخ الإنشاء",
+  "confirm_delete_exercise_type_msg": "هل أنت متأكد من حذف نوع التمرين هذا؟ لا يمكن التراجع عن هذا الإجراء.",
+  "confirm_delete_exercise_type_in_use_msg": "هذا النوع لا يزال مستخدماً في خطط نشطة. حذفه لن يزيل تلك الخطط لكنه لن يظهر في القوائم بعد ذلك. هل تريد المتابعة؟"
 }

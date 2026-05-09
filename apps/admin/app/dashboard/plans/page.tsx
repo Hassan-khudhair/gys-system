@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "../../../lib/supabase/client";
 import { useLocale } from "../../../lib/i18n";
 import { useAdmin } from "../../../lib/admin-context";
@@ -9,17 +9,17 @@ import { Pagination } from "../../../components/pagination";
 import { useToast } from "../../../components/toast";
 import { useConfirm } from "../../../components/confirm-dialog";
 import { Tag, Plus, Pencil, Trash2, Loader2, CheckCircle, XCircle } from "lucide-react";
-import type { SubscriptionPlan, ExerciseType } from "@gym/lib";
+import type { SubscriptionPlan } from "@gym/lib";
+import { exerciseTypeBadgeClass } from "@gym/lib";
 
 const PAGE_SIZE = 10;
-const TABS = ["all", "fitness", "bodybuilding"] as const;
 
 export default function PlansPage() {
   const { t } = useLocale();
   const { toast } = useToast();
   const { confirm } = useConfirm();
-  const { gymId, plans, plansLoading, reloadPlans } = useAdmin();
-  const [tab, setTab] = useState<(typeof TABS)[number]>("all");
+  const { gymId, plans, plansLoading, reloadPlans, exerciseTypes } = useAdmin();
+  const [tab, setTab] = useState("all");
   const [page, setPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
   const [editPlan, setEditPlan] = useState<SubscriptionPlan | null>(null);
@@ -43,22 +43,17 @@ export default function PlansPage() {
     reloadPlans();
   }
 
+  const allTabs = ["all", ...exerciseTypes.map((et) => et.name)];
   const filtered = plans.filter((p) => tab === "all" || p.exercise_type === tab);
   const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
   const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
-  function handleTab(t: (typeof TABS)[number]) { setTab(t); setPage(1); }
+  function handleTab(tb: string) { setTab(tb); setPage(1); }
 
-  const tabLabels: Record<(typeof TABS)[number], string> = {
-    all: t("tab_all_plans"),
-    fitness: t("tab_fitness"),
-    bodybuilding: t("tab_bodybuilding"),
-  };
-
-  const EXERCISE_BADGE = {
-    fitness: "bg-[#38BDF8]/10 text-[#38BDF8] border-[#38BDF8]/20",
-    bodybuilding: "bg-warning/10 text-warning border-warning/20",
-  };
+  // Reset to "all" if the active tab's exercise type was deleted
+  useEffect(() => {
+    if (tab !== "all" && !exerciseTypes.some((et) => et.name === tab)) setTab("all");
+  }, [exerciseTypes, tab]);
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -78,8 +73,8 @@ export default function PlansPage() {
 
       <div className="p-6 space-y-5">
         {/* Tabs */}
-        <div className="flex gap-1 bg-surface border border-border rounded-xl p-1 w-fit">
-          {TABS.map((tb) => (
+        <div className="flex gap-1 flex-wrap bg-surface border border-border rounded-xl p-1 w-fit">
+          {allTabs.map((tb) => (
             <button
               key={tb}
               onClick={() => handleTab(tb)}
@@ -87,7 +82,7 @@ export default function PlansPage() {
                 tab === tb ? "bg-surface-2 text-text shadow-sm" : "text-muted hover:text-text"
               }`}
             >
-              {tabLabels[tb]}
+              {tb === "all" ? t("tab_all_plans") : tb}
             </button>
           ))}
         </div>
@@ -119,8 +114,8 @@ export default function PlansPage() {
                     <tr key={plan.id} className="hover:bg-surface-2/60 transition-colors">
                       <td className="px-5 py-3.5 font-medium text-text">{plan.name}</td>
                       <td className="px-5 py-3.5">
-                        <span className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border ${EXERCISE_BADGE[plan.exercise_type]}`}>
-                          {plan.exercise_type === "fitness" ? t("fitness") : t("bodybuilding")}
+                        <span className={`inline-flex items-center text-xs font-medium px-2.5 py-1 rounded-full border ${exerciseTypeBadgeClass(plan.exercise_type)}`}>
+                          {plan.exercise_type}
                         </span>
                       </td>
                       <td className="px-5 py-3.5 text-muted">
@@ -163,8 +158,8 @@ export default function PlansPage() {
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <p className="font-semibold text-text">{plan.name}</p>
-                      <span className={`inline-flex items-center mt-1 text-xs font-medium px-2 py-0.5 rounded-full border ${EXERCISE_BADGE[plan.exercise_type]}`}>
-                        {plan.exercise_type === "fitness" ? t("fitness") : t("bodybuilding")}
+                      <span className={`inline-flex items-center mt-1 text-xs font-medium px-2 py-0.5 rounded-full border ${exerciseTypeBadgeClass(plan.exercise_type)}`}>
+                        {plan.exercise_type}
                       </span>
                     </div>
                     <div className="flex items-center gap-1 shrink-0">

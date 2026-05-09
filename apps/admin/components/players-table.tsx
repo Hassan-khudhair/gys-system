@@ -1,9 +1,8 @@
 "use client";
 
-import { useState } from "react";
 import { Search, Pencil, Trash2, RefreshCw, Users } from "lucide-react";
 import type { Player } from "@gym/lib";
-import { formatDateShort, getPlayerStatus } from "@gym/lib";
+import { formatDateShort, getPlayerStatus, exerciseTypeBadgeClass } from "@gym/lib";
 import { useLocale } from "../lib/i18n";
 import { Pagination } from "./pagination";
 
@@ -18,7 +17,6 @@ interface Props {
   onEdit: (player: Player) => void;
   onDelete: (player: Player) => void;
   onRenew: (player: Player) => void;
-  filterStatus?: "all" | "active" | "expiring" | "expired";
 }
 
 const STATUS_CLASSES = {
@@ -27,10 +25,6 @@ const STATUS_CLASSES = {
   expired:  "text-danger bg-danger/10 border-danger/20",
 };
 
-const EXERCISE_BADGE = {
-  fitness:      "bg-[#38BDF8]/10 text-[#38BDF8] border-[#38BDF8]/20",
-  bodybuilding: "bg-warning/10 text-warning border-warning/20",
-};
 
 function PlayerAvatar({ name }: { name: string }) {
   const initials = name.trim().split(" ").slice(0, 2).map((w) => w[0]).join("").toUpperCase();
@@ -41,8 +35,8 @@ function PlayerAvatar({ name }: { name: string }) {
   );
 }
 
-export function PlayersTable({ 
-  players, loading, page, totalPages, onPage, search, onSearch, onEdit, onDelete, onRenew, filterStatus = "all" 
+export function PlayersTable({
+  players, loading, page, totalPages, onPage, search, onSearch, onEdit, onDelete, onRenew,
 }: Props) {
   const { t } = useLocale();
 
@@ -95,15 +89,15 @@ export function PlayersTable({
                       <PlayerAvatar name={player.name} />
                       <div>
                         <p className="font-medium text-text">{player.name}</p>
-                        {player.email && <p className="text-xs text-muted">{player.email}</p>}
+                        {player.age != null && <p className="text-xs text-muted">{player.age} {t("age")}</p>}
                       </div>
                     </div>
                   </td>
                   <td className="px-5 py-3.5 text-muted">{player.phone ?? t("dash")}</td>
                   <td className="px-5 py-3.5">
                     {player.exercise_type ? (
-                      <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full border ${EXERCISE_BADGE[player.exercise_type]}`}>
-                        {player.exercise_type === "fitness" ? t("fitness") : t("bodybuilding")}
+                      <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full border ${exerciseTypeBadgeClass(player.exercise_type)}`}>
+                        {player.exercise_type}
                       </span>
                     ) : <span className="text-faint text-xs">{t("dash")}</span>}
                   </td>
@@ -169,8 +163,8 @@ export function PlayersTable({
                 <div>
                   <p className="text-[10px] text-muted uppercase font-medium mb-1">{t("exercise_type_label")}</p>
                   {player.exercise_type ? (
-                    <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full border ${EXERCISE_BADGE[player.exercise_type]}`}>
-                      {player.exercise_type === "fitness" ? t("fitness") : t("bodybuilding")}
+                    <span className={`inline-flex items-center text-xs font-medium px-2 py-0.5 rounded-full border ${exerciseTypeBadgeClass(player.exercise_type)}`}>
+                      {player.exercise_type}
                     </span>
                   ) : <p className="text-xs text-faint">{t("dash")}</p>}
                 </div>
