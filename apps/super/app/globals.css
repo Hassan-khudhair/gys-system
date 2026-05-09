@@ -1,31 +1,31 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg:           #0F172A;
-  --color-surface:      #1E293B;
-  --color-surface-2:    #263348;
-  --color-border:       #334155;
+  /* Dark mode — zinc-based neutral palette, violet primary */
+  --color-bg:           #09090b;
+  --color-surface:      #111113;
+  --color-surface-2:    #1c1c1f;
+  --color-border:       #27272a;
   --color-primary:      #8B5CF6;
-  --color-primary-dim:  rgba(139,92,246,0.15);
-  --color-text:         #F8FAFC;
-  --color-muted:        #94A3B8;
-  --color-faint:        #475569;
-  --color-success:      #22C55E;
-  --color-danger:       #EF4444;
-  --color-warning:      #F59E0B;
+  --color-primary-dim:  rgba(139,92,246,0.12);
+  --color-text:         #fafafa;
+  --color-muted:        #a1a1aa;
+  --color-faint:        #52525b;
+  --color-success:      #22c55e;
+  --color-danger:       #ef4444;
+  --color-warning:      #f59e0b;
 
   --font-sans: var(--font-tajawal), system-ui, sans-serif;
 }
 
-/* Light theme overrides */
 [data-theme="light"] {
-  --color-bg:        #F1F5F9;
-  --color-surface:   #FFFFFF;
-  --color-surface-2: #F8FAFC;
-  --color-border:    #E2E8F0;
-  --color-text:      #0F172A;
-  --color-muted:     #64748B;
-  --color-faint:     #94A3B8;
+  --color-bg:        #fafafa;
+  --color-surface:   #ffffff;
+  --color-surface-2: #f4f4f5;
+  --color-border:    #e4e4e7;
+  --color-text:      #09090b;
+  --color-muted:     #71717a;
+  --color-faint:     #a1a1aa;
 }
 
 html, body {
@@ -35,12 +35,19 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
-  transition: background-color 0.2s, color 0.2s;
+  transition: background-color 0.15s, color 0.15s;
 }
 
-::-webkit-scrollbar        { width: 5px; height: 5px; }
-::-webkit-scrollbar-track  { background: var(--color-surface); }
-::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 4px; }
+/* Refined scrollbar */
+::-webkit-scrollbar        { width: 4px; height: 4px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-faint); }
+
+/* Focus ring */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
 
 * { box-sizing: border-box; }

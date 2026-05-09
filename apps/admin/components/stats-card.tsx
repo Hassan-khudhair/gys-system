@@ -5,21 +5,19 @@ interface StatsCardProps {
   value: string | number;
   icon: LucideIcon;
   iconColor: string;
-  iconBg: string;
+  iconBg?: string;
   trend?: string;
 }
 
-export function StatsCard({ title, value, icon: Icon, iconColor, iconBg, trend }: StatsCardProps) {
+export function StatsCard({ title, value, icon: Icon, iconColor, trend }: StatsCardProps) {
   return (
-    <div className="bg-surface border border-border rounded-xl p-5 flex items-start gap-4 transition-colors">
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${iconBg}`}>
-        <Icon className={`w-5 h-5 ${iconColor}`} />
+    <div className="bg-surface border border-border rounded-xl p-5 transition-colors">
+      <div className="flex items-start justify-between mb-3">
+        <p className="text-xs font-medium text-muted uppercase tracking-wider">{title}</p>
+        <Icon className={`w-4 h-4 shrink-0 opacity-60 ${iconColor}`} />
       </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm text-muted font-medium truncate">{title}</p>
-        <p className="text-2xl font-bold text-text mt-0.5">{value}</p>
-        {trend && <p className="text-xs text-muted mt-1">{trend}</p>}
-      </div>
+      <p className="text-3xl font-bold text-text tabular-nums leading-none">{value}</p>
+      {trend && <p className="text-xs text-muted mt-2">{trend}</p>}
     </div>
   );
 }

@@ -33,7 +33,7 @@ export function Sidebar({ gymName, onClose }: SidebarProps) {
   }
 
   return (
-    <aside className="w-60 shrink-0 flex flex-col h-screen sticky top-0 bg-surface border-e border-border transition-colors">
+    <aside className="w-56 shrink-0 flex flex-col h-screen sticky top-0 bg-bg border-e border-border transition-colors">
       {/* Logo */}
       <div className="px-5 py-6 border-b border-border flex items-center justify-between">
         <div className="flex items-center gap-3">

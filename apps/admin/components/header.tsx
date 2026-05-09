@@ -31,7 +31,7 @@ export function Header({ title, subtitle, gymName, adminName, email, onMenuClick
   }, []);
 
   return (
-    <header className="h-16 px-4 md:px-6 border-b border-border flex items-center justify-between bg-surface/80 backdrop-blur-sm sticky top-0 z-10 transition-colors">
+    <header className="h-14 px-4 md:px-6 border-b border-border flex items-center justify-between bg-bg/80 backdrop-blur-sm sticky top-0 z-10 transition-colors">
       <div className="flex items-center gap-3">
         <button 
           onClick={onMenuClick}
