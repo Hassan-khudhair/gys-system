@@ -40,10 +40,10 @@ export function Sidebar({ gymName, onClose }: SidebarProps) {
       className="w-56 shrink-0 flex flex-col h-screen sticky top-0 border-e border-border/30 transition-colors overflow-hidden"
       style={{ backgroundColor: "var(--color-sidebar)" }}
     >
-      {/* Top atmospheric glow — indigo */}
+      {/* Top atmospheric glow — teal */}
       <div
         className="absolute top-0 inset-x-0 h-56 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse at 50% -20%, rgba(99,102,241,0.13) 0%, transparent 70%)" }}
+        style={{ background: "radial-gradient(ellipse at 50% -20%, rgba(0,182,204,0.13) 0%, transparent 70%)" }}
       />
 
       {/* Large faded Dumbbell — brand watermark */}
@@ -56,12 +56,11 @@ export function Sidebar({ gymName, onClose }: SidebarProps) {
 
       {/* Logo / gym header */}
       <div className="relative flex items-center gap-3 px-4 py-4 border-b border-border/25">
-        <div className="w-8 h-8 rounded-lg overflow-hidden ring-1 ring-white/8 shrink-0">
-          <Image src="/logo.png" alt="Mr. Gym" width={32} height={32} className="object-contain w-full h-full" />
+        <div className="w-16 h-12 rounded-lg overflow-hidden ring-1 ring-white/8 shrink-0">
+          <Image src="/logo.png" alt="fitnex" width={62} height={32} className="object-contain w-full h-full" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[13px] font-semibold text-text leading-tight tracking-tight">Mr. Gym</p>
-          <p className="text-[10px] text-primary font-medium truncate opacity-70 mt-0.5">
+          <p className="text-lg text-primary font-bold truncate opacity-70 mt-0.5">
             {gymName ?? t("gym_admin_role")}
           </p>
         </div>
@@ -90,7 +89,7 @@ export function Sidebar({ gymName, onClose }: SidebarProps) {
                       key={href}
                       href={href}
                       onClick={() => onClose?.()}
-                      className={`group relative flex items-center gap-2.5 px-3 py-2.25 rounded-lg text-[13px] transition-all duration-150 overflow-hidden ${
+                      className={`group relative flex items-center gap-2.5 px-3 py-2.25 rounded-lg text-sm transition-all duration-150 overflow-hidden ${
                         active
                           ? "bg-primary/10 text-primary font-medium"
                           : "text-muted hover:text-text hover:bg-primary/5"
@@ -101,7 +100,7 @@ export function Sidebar({ gymName, onClose }: SidebarProps) {
                         <span className="absolute inset-s-0 inset-y-0 w-0.5 rounded-full bg-primary" />
                       )}
                       <Icon
-                        className={`w-4 h-4 shrink-0 transition-colors ${
+                        className={`w-5 h-5 shrink-0 transition-colors ${
                           active ? "text-primary" : "text-faint group-hover:text-muted"
                         }`}
                       />

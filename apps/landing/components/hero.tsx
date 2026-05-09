@@ -28,8 +28,8 @@ function MockDashboard() {
     <div className="glass-card rounded-2xl overflow-hidden shadow-2xl w-85 glow-indigo-sm">
       <div className="flex items-center justify-between px-5 py-3.5 border-b border-white/7">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-indigo-500/20 border border-indigo-500/25 flex items-center justify-center">
-            <Dumbbell className="w-4 h-4 text-indigo-400" />
+          <div className="w-8 h-8 rounded-lg bg-[#00748e]/20 border border-[#00748e]/25 flex items-center justify-center">
+            <Dumbbell className="w-4 h-4 text-[#00b6cc]" />
           </div>
           <div>
             <p className="text-xs font-bold text-white leading-none mb-0.5">صالة الفروسية</p>
@@ -64,7 +64,7 @@ function MockDashboard() {
       <div className="divide-y divide-white/5">
         {members.map((m, i) => (
           <div key={i} className="flex items-center gap-3 px-4 py-2.5">
-            <div className="w-7 h-7 rounded-full bg-linear-to-br from-indigo-500/30 to-purple-500/30 border border-indigo-500/20 flex items-center justify-center text-[9px] font-bold text-indigo-300 shrink-0">
+            <div className="w-7 h-7 rounded-full bg-linear-to-br from-[#00748e]/30 to-[#078fa7]/30 border border-[#00748e]/20 flex items-center justify-center text-[9px] font-bold text-[#00b6cc] shrink-0">
               {m.init}
             </div>
             <span className="text-xs text-slate-300 flex-1 font-medium">{m.name}</span>
@@ -82,7 +82,7 @@ function MockDashboard() {
         <span className="text-[10px] text-slate-500">{t("mock_members_total")}</span>
         <div className="flex items-center gap-1">
           {[true, false, false].map((a, i) => (
-            <div key={i} className={`rounded-full ${a ? "w-4 h-1.5 bg-indigo-400" : "w-1.5 h-1.5 bg-slate-600"}`} />
+            <div key={i} className={`rounded-full ${a ? "w-4 h-1.5 bg-[#00b6cc]" : "w-1.5 h-1.5 bg-slate-600"}`} />
           ))}
         </div>
       </div>
@@ -105,7 +105,7 @@ function RevenueWidget() {
       <p className="text-base font-bold text-white">IQD 4.25M</p>
       <p className="text-[10px] text-slate-500 mb-3">{t("mock_this_month")}</p>
       <div className="h-1 bg-slate-800 rounded-full overflow-hidden">
-        <div className="h-full rounded-full bg-linear-to-r from-cyan-500 to-indigo-500" style={{ width: "72%" }} />
+        <div className="h-full rounded-full bg-linear-to-r from-[#00b6cc] to-[#00748e]" style={{ width: "72%" }} />
       </div>
       <p className="text-[9px] text-emerald-400 mt-1.5 font-medium">↑ +18% {t("mock_vs_last")}</p>
     </div>
@@ -142,20 +142,20 @@ export function Hero() {
       {/* Background blobs */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-40 -right-40 w-175 h-175 rounded-full animate-blob animate-glow-pulse"
-          style={{ background: "radial-gradient(ellipse, rgba(99,102,241,0.20) 0%, transparent 70%)" }} />
+          style={{ background: "radial-gradient(ellipse, rgba(0,116,142,0.20) 0%, transparent 70%)" }} />
         <div className="absolute -bottom-40 -left-40 w-125 h-125 rounded-full animate-blob"
-          style={{ background: "radial-gradient(ellipse, rgba(6,182,212,0.13) 0%, transparent 70%)", animationDelay: "4s" }} />
+          style={{ background: "radial-gradient(ellipse, rgba(0,182,204,0.13) 0%, transparent 70%)", animationDelay: "4s" }} />
         <div className="absolute top-1/3 left-1/4 w-72 h-72 rounded-full"
-          style={{ background: "radial-gradient(ellipse, rgba(168,85,247,0.07) 0%, transparent 70%)" }} />
+          style={{ background: "radial-gradient(ellipse, rgba(7,143,167,0.07) 0%, transparent 70%)" }} />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-6 grid lg:grid-cols-2 gap-16 items-center">
 
         {/* Left: Copy */}
         <div className="animate-slide-up">
-          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-indigo-500/25 bg-indigo-500/10 mb-8">
-            <div className="w-1.5 h-1.5 rounded-full bg-indigo-400 animate-pulse" />
-            <span className="text-xs font-medium text-indigo-300 tracking-wide">{t("hero_badge")}</span>
+          <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-[#00748e]/25 bg-[#00748e]/10 mb-8">
+            <div className="w-1.5 h-1.5 rounded-full bg-[#00b6cc] animate-pulse" />
+            <span className="text-xs font-medium text-[#00b6cc] tracking-wide">{t("hero_badge")}</span>
           </div>
 
           <h1 className="text-5xl lg:text-6xl xl:text-7xl font-extrabold tracking-tight leading-[1.05] text-white mb-6">
@@ -170,8 +170,8 @@ export function Hero() {
 
           <div className="flex flex-wrap gap-4 mb-12">
             <a href={REGISTER_URL}
-              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-7 py-3.5 rounded-xl transition-all shadow-xl shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5">
-              {t("hero_cta_register")} 
+              className="flex items-center gap-2 bg-[#00748e] hover:bg-[#078fa7] text-white font-semibold px-7 py-3.5 rounded-xl transition-all shadow-xl shadow-[#00748e]/25 hover:shadow-[#078fa7]/40 hover:-translate-y-0.5">
+              {t("hero_cta_register")}
               {locale === "en" ? (
                 <ArrowRight className="w-4 h-4 inline-block ms-1" />
               ) : (
@@ -186,7 +186,7 @@ export function Hero() {
 
           <div className="flex flex-wrap gap-6 text-sm text-slate-500">
             {[
-              { icon: Shield,      color: "text-indigo-400", key: "hero_trust_secure"    as const },
+              { icon: Shield,      color: "text-[#00b6cc]",  key: "hero_trust_secure"    as const },
               { icon: Users,       color: "text-emerald-400", key: "hero_trust_members"  as const },
               { icon: TrendingUp,  color: "text-cyan-400",    key: "hero_trust_analytics" as const },
             ].map(({ icon: Icon, color, key }) => (
@@ -201,7 +201,7 @@ export function Hero() {
         {/* Right: Floating mockup */}
         <div className="relative hidden lg:block h-130">
           <div className="absolute inset-0 m-auto w-80 h-80 rounded-full pointer-events-none animate-spin-slow opacity-[0.07]"
-            style={{ border: "1px dashed rgba(99,102,241,1)" }} />
+            style={{ border: "1px dashed rgba(0,116,142,1)" }} />
           <div className="absolute top-6 left-0 z-20 animate-float-delayed">
             <RevenueWidget />
           </div>

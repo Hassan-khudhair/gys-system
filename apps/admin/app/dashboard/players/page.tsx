@@ -108,27 +108,30 @@ export default function PlayersPage() {
       </div>
 
       <div className="p-6 space-y-5">
-        <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-1 bg-surface border border-border rounded-lg p-1 transition-colors">
-            {TABS.map(({ key, icon: Icon, label, color, count }) => (
-              <button key={key} onClick={() => { setTab(key); setPage(1); }}
-                className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                  tab === key ? "bg-surface-2 text-text shadow-sm" : "text-muted hover:text-text"
-                }`}
-              >
-                <Icon className={`w-3.5 h-3.5 ${tab === key ? color : ""}`} />
-                {label}
-                <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
-                  tab === key ? "bg-border text-text" : "text-faint"
-                }`}>
-                  {count}
-                </span>
-              </button>
-            ))}
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          {/* Scrollable tab bar — no line-break on mobile */}
+          <div className="overflow-x-auto [-webkit-overflow-scrolling:touch] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+            <div className="flex items-center gap-1 bg-surface border border-border rounded-lg p-1 w-max transition-colors">
+              {TABS.map(({ key, icon: Icon, label, color, count }) => (
+                <button key={key} onClick={() => { setTab(key); setPage(1); }}
+                  className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-sm font-medium transition-all whitespace-nowrap ${
+                    tab === key ? "bg-surface-2 text-text shadow-sm" : "text-muted hover:text-text"
+                  }`}
+                >
+                  <Icon className={`w-3.5 h-3.5 shrink-0 ${tab === key ? color : ""}`} />
+                  <span className="hidden xs:inline sm:inline">{label}</span>
+                  <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
+                    tab === key ? "bg-border text-text" : "text-faint"
+                  }`}>
+                    {count}
+                  </span>
+                </button>
+              ))}
+            </div>
           </div>
 
           <button onClick={() => { setEditPlayer(null); setEditOpen(true); }} disabled={!gymId}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors shadow-md shadow-primary/20">
+            className="flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 disabled:opacity-50 text-white text-sm font-semibold px-4 py-2.5 rounded-lg transition-colors shadow-md shadow-primary/20 w-full sm:w-auto">
             <Plus className="w-4 h-4" />
             {t("add_player")}
           </button>

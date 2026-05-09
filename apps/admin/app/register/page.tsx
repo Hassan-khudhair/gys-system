@@ -5,6 +5,7 @@ import { Dumbbell, Eye, EyeOff, Loader2, CheckCircle2, ChevronRight } from "luci
 import Link from "next/link";
 import { createClient } from "../../lib/supabase/client";
 import { useLocale } from "../../lib/i18n";
+import Image from "next/image";
 
 export default function RegisterPage() {
   const { t } = useLocale();
@@ -64,8 +65,8 @@ export default function RegisterPage() {
     <div className="min-h-screen bg-bg px-4 py-10 transition-colors">
       <div className="w-full max-w-xl mx-auto">
         <div className="flex flex-col items-center mb-8">
-          <div className="w-14 h-14 bg-primary rounded-2xl flex items-center justify-center mb-4 shadow-lg shadow-primary/30">
-            <Dumbbell className="w-8 h-8 text-white" />
+          <div className="w-full rounded-2xl flex items-center justify-center mb-4 ">
+            <Image src="/logo.png" alt="FitNex" width={56} height={36} className="w-26 h-16 " />
           </div>
           <h1 className="text-2xl font-bold text-text">{t("register_gym")}</h1>
           <p className="text-muted text-sm mt-1">

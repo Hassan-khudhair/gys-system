@@ -22,16 +22,15 @@ export function Footer() {
   };
 
   return (
-    <footer className="relative border-t border-white/6 bg-[#03030c]">
+    <footer className="relative border-t border-white/6 bg-[#030d10]">
       <div className="max-w-7xl mx-auto px-6 py-16 grid md:grid-cols-4 gap-10">
         {/* Brand */}
         <div className="md:col-span-2">
           <a href="/" className="flex items-center gap-2.5 mb-4">
             <div className="w-9 h-9 rounded-xl overflow-hidden bg-white shadow-sm shrink-0">
-              <Image src="/logo.png" alt="Mr. Gym" width={36} height={36} className="object-contain w-full h-full" />
+              <Image src="/logo.png" alt="FitNex" width={36} height={36} className="object-contain w-full h-full" />
             </div>
             <span className="text-sm font-bold text-white tracking-wide">
-              Mr.<span className="text-indigo-400">Gym</span>
             </span>
           </a>
           <p className="text-sm text-slate-500 leading-relaxed max-w-xs">
@@ -61,7 +60,7 @@ export function Footer() {
 
       <div className="border-t border-white/5 px-6 py-5">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4 text-xs text-slate-600">
-          <span>© {new Date().getFullYear()} Mr. Gym. {t("footer_copyright")}</span>
+          <span>© {new Date().getFullYear()} FitNex. {t("footer_copyright")}</span>
           <span className="flex items-center gap-1.5">
             {t("footer_love")} <span className="text-red-500">♥</span> {t("footer_love2")}
           </span>

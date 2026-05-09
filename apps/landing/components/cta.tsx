@@ -26,17 +26,17 @@ export function Cta() {
       {/* Background blobs */}
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-150 h-150 rounded-full"
-          style={{ background: "radial-gradient(ellipse, rgba(99,102,241,0.13) 0%, transparent 70%)" }} />
+          style={{ background: "radial-gradient(ellipse, rgba(0,116,142,0.13) 0%, transparent 70%)" }} />
         <div className="absolute -bottom-24 right-0 w-100 h-100 rounded-full"
-          style={{ background: "radial-gradient(ellipse, rgba(6,182,212,0.08) 0%, transparent 70%)" }} />
+          style={{ background: "radial-gradient(ellipse, rgba(0,182,204,0.08) 0%, transparent 70%)" }} />
       </div>
-      <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-cyan-500/20 to-transparent" />
+      <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-[#00b6cc]/20 to-transparent" />
 
       <div className="relative max-w-6xl mx-auto px-6">
 
         {/* Header */}
         <Reveal className="text-center mb-14">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-cyan-500/20 bg-cyan-500/8 text-xs font-medium text-cyan-400 mb-6">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#00b6cc]/20 bg-[#00b6cc]/8 text-xs font-medium text-[#00b6cc] mb-6">
             ✦ {t("cta_badge")}
           </span>
           <h2 className="text-4xl lg:text-5xl xl:text-6xl font-extrabold text-white tracking-tight leading-tight mb-5">
@@ -51,8 +51,8 @@ export function Cta() {
         {/* CTA Buttons */}
         <Reveal className="flex flex-wrap items-center justify-center gap-4 mb-16" delay={100}>
           <a href={REGISTER_URL}
-            className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-2xl shadow-indigo-500/25 hover:shadow-indigo-500/40 hover:-translate-y-0.5 text-base">
-            {t("cta_register_btn")} 
+            className="flex items-center gap-2 bg-[#00748e] hover:bg-[#078fa7] text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-2xl shadow-[#00748e]/25 hover:shadow-[#078fa7]/40 hover:-translate-y-0.5 text-base">
+            {t("cta_register_btn")}
             {locale === "en" ? (
                 <ArrowRight className="w-4 h-4 inline-block ms-1" />
             ) : (
@@ -62,7 +62,7 @@ export function Cta() {
           <div className="flex items-center gap-3 text-sm text-slate-500">
             <span>{t("cta_login_text")}</span>
             <a href={LOGIN_URL}
-              className="font-semibold text-indigo-400 hover:text-indigo-300 transition-colors underline underline-offset-2">
+              className="font-semibold text-[#00b6cc] hover:text-[#00b6cc]/80 transition-colors underline underline-offset-2">
               {t("cta_login_btn")}
             </a>
           </div>

@@ -7,18 +7,18 @@ import { Reveal } from "./reveal";
 const REGISTER_URL = process.env.NEXT_PUBLIC_ADMIN_REGISTER_URL ?? "#";
 
 const CARD_CLS: Record<string, string> = {
-  indigo: "border-indigo-500/20 bg-indigo-500/8",
-  purple: "border-purple-500/20 bg-purple-500/8",
+  indigo: "border-[#00748e]/20 bg-[#00748e]/8",
+  purple: "border-[#078fa7]/20 bg-[#078fa7]/8",
   cyan:   "border-cyan-500/20   bg-cyan-500/8",
 };
 const ICON_CLS: Record<string, string> = {
-  indigo: "bg-indigo-500/20 border-indigo-500/30 text-indigo-400",
-  purple: "bg-purple-500/20 border-purple-500/30 text-purple-400",
+  indigo: "bg-[#00748e]/20 border-[#00748e]/30 text-[#00b6cc]",
+  purple: "bg-[#078fa7]/20 border-[#078fa7]/30 text-[#078fa7]",
   cyan:   "bg-cyan-500/20   border-cyan-500/30   text-cyan-400",
 };
 const NUM_CLS: Record<string, string> = {
-  indigo: "text-indigo-500/30",
-  purple: "text-purple-500/30",
+  indigo: "text-[#00748e]/30",
+  purple: "text-[#078fa7]/30",
   cyan:   "text-cyan-500/30",
 };
 
@@ -36,11 +36,11 @@ export function HowItWorks() {
 
   return (
     <section id="how" className="py-28 relative">
-      <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-purple-500/20 to-transparent" />
+      <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-[#078fa7]/20 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-6">
         <Reveal className="text-center mb-20">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-purple-500/20 bg-purple-500/8 text-xs font-medium text-purple-400 mb-5">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#078fa7]/20 bg-[#078fa7]/8 text-xs font-medium text-[#078fa7] mb-5">
             ✦ {t("how_badge")}
           </span>
           <h2 className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-5">
@@ -54,7 +54,7 @@ export function HowItWorks() {
 
         <div className="relative grid md:grid-cols-3 gap-8">
           {/* Connector line */}
-          <div className="hidden md:block absolute top-14 left-[20%] right-[20%] h-px bg-linear-to-r from-indigo-500/40 via-purple-500/40 to-cyan-500/40" />
+          <div className="hidden md:block absolute top-14 left-[20%] right-[20%] h-px bg-linear-to-r from-[#00748e]/40 via-[#078fa7]/40 to-[#00b6cc]/40" />
 
           {STEPS.map((s, i) => (
             <Reveal key={s.number} delay={i * 120}>
@@ -75,8 +75,8 @@ export function HowItWorks() {
 
         <Reveal className="text-center mt-16" delay={300}>
           <a href={REGISTER_URL}
-            className="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-500 text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-xl shadow-indigo-500/20 hover:shadow-indigo-500/35 hover:-translate-y-0.5 text-sm">
-            {t("how_cta")} 
+            className="inline-flex items-center gap-2 bg-[#00748e] hover:bg-[#078fa7] text-white font-semibold px-8 py-4 rounded-xl transition-all shadow-xl shadow-[#00748e]/20 hover:shadow-[#078fa7]/35 hover:-translate-y-0.5 text-sm">
+            {t("how_cta")}
             {locale === "en" ? (
                 <ArrowRight className="w-4 h-4 inline-block ms-1" />
             ) : (

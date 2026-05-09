@@ -8,13 +8,13 @@ import { useLocale } from "@/lib/i18n";
 import { Reveal } from "./reveal";
 
 const ICON_CLS: Record<string, string> = {
-  indigo:  "bg-indigo-500/15 border-indigo-500/20 text-indigo-400",
-  purple:  "bg-purple-500/15 border-purple-500/20 text-purple-400",
+  indigo:  "bg-[#00748e]/15 border-[#00748e]/20 text-[#00b6cc]",
+  purple:  "bg-[#078fa7]/15 border-[#078fa7]/20 text-[#078fa7]",
   amber:   "bg-amber-500/15  border-amber-500/20  text-amber-400",
   cyan:    "bg-cyan-500/15   border-cyan-500/20   text-cyan-400",
   blue:    "bg-blue-500/15   border-blue-500/20   text-blue-400",
   emerald: "bg-emerald-500/15 border-emerald-500/20 text-emerald-400",
-  violet:  "bg-violet-500/15 border-violet-500/20 text-violet-400",
+  violet:  "bg-[#00748e]/15 border-[#00748e]/20 text-[#00b6cc]",
   slate:   "bg-slate-500/15  border-slate-500/20  text-slate-400",
 };
 
@@ -34,11 +34,11 @@ export function Features() {
 
   return (
     <section id="features" className="py-28 relative">
-      <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-indigo-500/20 to-transparent" />
+      <div className="absolute top-0 inset-x-0 h-px bg-linear-to-r from-transparent via-[#00748e]/20 to-transparent" />
 
       <div className="max-w-7xl mx-auto px-6">
         <Reveal className="text-center mb-16">
-          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-indigo-500/20 bg-indigo-500/8 text-xs font-medium text-indigo-400 mb-5">
+          <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full border border-[#00748e]/20 bg-[#00748e]/8 text-xs font-medium text-[#00b6cc] mb-5">
             ✦ {t("features_badge")}
           </span>
           <h2 className="text-4xl lg:text-5xl font-extrabold text-white tracking-tight mb-5">

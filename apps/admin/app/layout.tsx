@@ -12,8 +12,8 @@ const tajawal = Tajawal({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s — Mr. Gym",
-    default: "Admin Panel — Mr. Gym",
+    template: "%s — FitNex",
+    default: "Admin Panel — FitNex",
   },
   description: "Gym management platform for fitness professionals.",
   icons: {
@@ -21,8 +21,8 @@ export const metadata: Metadata = {
     apple: "/logo.png",
   },
   themeColor: [
-    { media: "(prefers-color-scheme: dark)",  color: "#07080e" },
-    { media: "(prefers-color-scheme: light)", color: "#f0f5ff" },
+    { media: "(prefers-color-scheme: dark)",  color: "#030d10" },
+    { media: "(prefers-color-scheme: light)", color: "#f0fbfc" },
   ],
 };
 

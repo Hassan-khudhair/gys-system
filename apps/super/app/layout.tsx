@@ -12,17 +12,17 @@ const tajawal = Tajawal({
 
 export const metadata: Metadata = {
   title: {
-    template: "%s — Mr. Gym",
-    default: "Super Admin — Mr. Gym",
+    template: "%s — FitNex",
+    default: "Super Admin — FitNex",
   },
-  description: "Mr. Gym platform management and administration.",
+  description: "FitNex platform management and administration.",
   icons: {
     icon: [{ url: "/logo.png", type: "image/png" }],
     apple: "/logo.png",
   },
   themeColor: [
-    { media: "(prefers-color-scheme: dark)",  color: "#07080e" },
-    { media: "(prefers-color-scheme: light)", color: "#f0f5ff" },
+    { media: "(prefers-color-scheme: dark)",  color: "#030d10" },
+    { media: "(prefers-color-scheme: light)", color: "#f0fbfc" },
   ],
 };
 

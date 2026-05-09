@@ -29,18 +29,18 @@ export function Navbar() {
     <header
       className={`fixed inset-x-0 top-0 z-50 transition-all duration-500 ${
         scrolled
-          ? "bg-[#05050f]/90 backdrop-blur-2xl border-b border-white/6 py-3 shadow-2xl"
+          ? "bg-[#040d10]/90 backdrop-blur-2xl border-b border-white/6 py-3 shadow-2xl"
           : "py-6"
       }`}
     >
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         {/* Logo */}
         <a href="/" className="flex items-center gap-2.5 group">
-          <div className="w-9 h-9 rounded-xl overflow-hidden bg-white shadow-md shadow-indigo-500/20 shrink-0 transition-all group-hover:scale-105">
-            <Image src="/logo.png" alt="Mr. Gym" width={36} height={36} className="object-contain w-full h-full" />
+          <div className="w-9 h-9 rounded-xl overflow-hidden bg-white shadow-md shadow-[#00748e]/20 shrink-0 transition-all group-hover:scale-105">
+            <Image src="/logo.png" alt="FitNex" width={36} height={36} className="object-contain w-full h-full" />
           </div>
           <span className="text-sm font-bold tracking-wide text-white">
-            Mr.<span className="text-indigo-400">Gym</span>
+            Fit<span className="text-[#00b6cc]">Nex</span>
           </span>
         </a>
 
@@ -72,8 +72,8 @@ export function Navbar() {
 
           {/* Register */}
           <a href={REGISTER_URL}
-            className="flex items-center gap-2 text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-indigo-500/20 hover:shadow-indigo-500/35 hover:-translate-y-px">
-            {t("nav_register_btn")} 
+            className="flex items-center gap-2 text-sm font-semibold bg-[#00748e] hover:bg-[#078fa7] text-white px-5 py-2.5 rounded-xl transition-all shadow-lg shadow-[#00748e]/20 hover:shadow-[#078fa7]/35 hover:-translate-y-px">
+            {t("nav_register_btn")}
             {locale === "en" ? (
                 <ArrowRight className="w-4 h-4 inline-block ms-1" />
             ) : (
@@ -99,7 +99,7 @@ export function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden absolute inset-x-0 top-full bg-[#05050f]/96 backdrop-blur-2xl border-b border-white/6 px-6 py-4 space-y-1 shadow-2xl">
+        <div className="md:hidden absolute inset-x-0 top-full bg-[#040d10]/96 backdrop-blur-2xl border-b border-white/6 px-6 py-4 space-y-1 shadow-2xl">
           {NAV_LINKS.map((l) => (
             <a key={l.label} href={l.href} onClick={() => setOpen(false)}
               className="block text-sm text-slate-400 hover:text-white py-2.5 border-b border-white/5 transition-colors">
@@ -111,8 +111,8 @@ export function Navbar() {
             {t("nav_login")}
           </a>
           <a href={REGISTER_URL}
-            className="block text-sm font-semibold bg-indigo-600 hover:bg-indigo-500 text-white px-5 py-3 rounded-xl text-center mt-3 transition-colors">
-            {t("nav_register_btn")} 
+            className="block text-sm font-semibold bg-[#00748e] hover:bg-[#078fa7] text-white px-5 py-3 rounded-xl text-center mt-3 transition-colors">
+            {t("nav_register_btn")}
             {locale === "en" ? (
               <ArrowRight className="w-4 h-4 inline-block ms-1" />
             ) : (
