@@ -1,16 +1,17 @@
 @import "tailwindcss";
 
 @theme {
-  /* Dark mode — zinc-based neutral palette, violet primary */
-  --color-bg:           #09090b;
-  --color-surface:      #111113;
-  --color-surface-2:    #1c1c1f;
-  --color-border:       #27272a;
+  /* Deep navy-blue base — sky-inspired, violet primary */
+  --color-bg:           #07080e;
+  --color-sidebar:      #040508;
+  --color-surface:      #0d1018;
+  --color-surface-2:    #141b25;
+  --color-border:       #1d2636;
   --color-primary:      #8B5CF6;
   --color-primary-dim:  rgba(139,92,246,0.12);
-  --color-text:         #fafafa;
-  --color-muted:        #a1a1aa;
-  --color-faint:        #52525b;
+  --color-text:         #e2e9f3;
+  --color-muted:        #7a8a9e;
+  --color-faint:        #3a4558;
   --color-success:      #22c55e;
   --color-danger:       #ef4444;
   --color-warning:      #f59e0b;
@@ -19,23 +20,36 @@
 }
 
 [data-theme="light"] {
-  --color-bg:        #fafafa;
+  --color-bg:        #f0f5ff;
+  --color-sidebar:   #e8f0ff;
   --color-surface:   #ffffff;
-  --color-surface-2: #f4f4f5;
-  --color-border:    #e4e4e7;
-  --color-text:      #09090b;
-  --color-muted:     #71717a;
-  --color-faint:     #a1a1aa;
+  --color-surface-2: #eaf0fb;
+  --color-border:    #d0daf0;
+  --color-text:      #0f172a;
+  --color-muted:     #5a6987;
+  --color-faint:     #9baac5;
 }
 
 html, body {
   background-color: var(--color-bg);
+  /* Dual atmospheric gradient — violet top-right + sky-blue bottom-left */
+  background-image:
+    radial-gradient(ellipse at 65% 0%,   rgba(139,92,246,0.07) 0%, transparent 50%),
+    radial-gradient(ellipse at 5%  100%, rgba(56,189,248,0.04) 0%, transparent 45%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
   color: var(--color-text);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
-  transition: background-color 0.15s, color 0.15s;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+[data-theme="light"] body {
+  background-image:
+    radial-gradient(ellipse at 65% 0%,   rgba(139,92,246,0.05) 0%, transparent 50%),
+    radial-gradient(ellipse at 5%  100%, rgba(56,189,248,0.04) 0%, transparent 40%);
 }
 
 /* Refined scrollbar */
@@ -44,10 +58,25 @@ html, body {
 ::-webkit-scrollbar-thumb  { background: var(--color-border); border-radius: 99px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-faint); }
 
-/* Focus ring */
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
 * { box-sizing: border-box; }
+
+@keyframes shimmer {
+  0%   { background-position: -400% 0; }
+  100% { background-position:  400% 0; }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface)   25%,
+    var(--color-surface-2) 50%,
+    var(--color-surface)   75%
+  );
+  background-size: 400% 100%;
+  animation: shimmer 1.8s ease-in-out infinite;
+}
