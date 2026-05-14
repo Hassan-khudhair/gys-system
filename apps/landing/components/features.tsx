@@ -1,35 +1,81 @@
 "use client";
 
 import {
-  Users, Tag, AlertTriangle, TrendingUp,
-  Building2, RefreshCw, Globe, Moon,
+  Users,
+  Tag,
+  AlertTriangle,
+  TrendingUp,
+  Building2,
+  RefreshCw,
+  Globe,
+  Moon,
 } from "lucide-react";
 import { useLocale } from "@/lib/i18n";
 import { Reveal } from "./reveal";
 
 const ICON_CLS: Record<string, string> = {
-  indigo:  "bg-[#00748e]/15 border-[#00748e]/20 text-[#00b6cc]",
-  purple:  "bg-[#078fa7]/15 border-[#078fa7]/20 text-[#078fa7]",
-  amber:   "bg-amber-500/15  border-amber-500/20  text-amber-400",
-  cyan:    "bg-cyan-500/15   border-cyan-500/20   text-cyan-400",
-  blue:    "bg-blue-500/15   border-blue-500/20   text-blue-400",
+  indigo: "bg-[#00748e]/15 border-[#00748e]/20 text-[#00b6cc]",
+  purple: "bg-[#078fa7]/15 border-[#078fa7]/20 text-[#078fa7]",
+  amber: "bg-amber-500/15  border-amber-500/20  text-amber-400",
+  cyan: "bg-cyan-500/15   border-cyan-500/20   text-cyan-400",
+  blue: "bg-blue-500/15   border-blue-500/20   text-blue-400",
   emerald: "bg-emerald-500/15 border-emerald-500/20 text-emerald-400",
-  violet:  "bg-[#00748e]/15 border-[#00748e]/20 text-[#00b6cc]",
-  slate:   "bg-slate-500/15  border-slate-500/20  text-slate-400",
+  violet: "bg-[#00748e]/15 border-[#00748e]/20 text-[#00b6cc]",
+  slate: "bg-slate-500/15  border-slate-500/20  text-slate-400",
 };
 
 export function Features() {
   const { t } = useLocale();
 
   const FEATURES = [
-    { icon: Users,     color: "indigo",  titleKey: "f1_title" as const, descKey: "f1_desc" as const },
-    { icon: Tag,       color: "purple",  titleKey: "f2_title" as const, descKey: "f2_desc" as const },
-    { icon: AlertTriangle, color: "amber", titleKey: "f3_title" as const, descKey: "f3_desc" as const },
-    { icon: TrendingUp, color: "cyan",   titleKey: "f4_title" as const, descKey: "f4_desc" as const },
-    { icon: Building2, color: "blue",    titleKey: "f5_title" as const, descKey: "f5_desc" as const },
-    { icon: RefreshCw, color: "emerald", titleKey: "f6_title" as const, descKey: "f6_desc" as const },
-    { icon: Globe,     color: "violet",  titleKey: "f7_title" as const, descKey: "f7_desc" as const },
-    { icon: Moon,      color: "slate",   titleKey: "f8_title" as const, descKey: "f8_desc" as const },
+    {
+      icon: Users,
+      color: "indigo",
+      titleKey: "f1_title" as const,
+      descKey: "f1_desc" as const,
+    },
+    {
+      icon: Tag,
+      color: "purple",
+      titleKey: "f2_title" as const,
+      descKey: "f2_desc" as const,
+    },
+    {
+      icon: AlertTriangle,
+      color: "amber",
+      titleKey: "f3_title" as const,
+      descKey: "f3_desc" as const,
+    },
+    {
+      icon: TrendingUp,
+      color: "cyan",
+      titleKey: "f4_title" as const,
+      descKey: "f4_desc" as const,
+    },
+    {
+      icon: Building2,
+      color: "blue",
+      titleKey: "f5_title" as const,
+      descKey: "f5_desc" as const,
+    },
+    {
+      icon: RefreshCw,
+      color: "emerald",
+      titleKey: "f6_title" as const,
+      descKey: "f6_desc" as const,  
+    },
+    {
+      icon: Globe,
+      color: "violet",
+      titleKey: "f7_title" as const,
+      descKey: "f7_desc" as const,
+    },
+    {
+      icon: Moon,
+      color: "slate",
+      titleKey: "f8_title" as const,
+      descKey: "f8_desc" as const,
+    },
   ];
 
   return (
@@ -53,11 +99,17 @@ export function Features() {
           {FEATURES.map((f, i) => (
             <Reveal key={f.titleKey} delay={i * 60} direction="scale">
               <div className="feature-card h-full">
-                <div className={`w-11 h-11 rounded-xl border flex items-center justify-center mb-5 ${ICON_CLS[f.color]}`}>
+                <div
+                  className={`w-11 h-11 rounded-xl border flex items-center justify-center mb-5 ${ICON_CLS[f.color]}`}
+                >
                   <f.icon className="w-5 h-5" />
                 </div>
-                <h3 className="text-sm font-bold text-white mb-2 leading-snug">{t(f.titleKey)}</h3>
-                <p className="text-sm text-slate-500 leading-relaxed">{t(f.descKey)}</p>
+                <h3 className="text-sm font-bold text-white mb-2 leading-snug">
+                  {t(f.titleKey)}
+                </h3>
+                <p className="text-sm text-slate-500 leading-relaxed">
+                  {t(f.descKey)}
+                </p>
               </div>
             </Reveal>
           ))}

@@ -41,7 +41,7 @@ export function StatsCard({ title, value, icon: Icon, iconColor, trend }: StatsC
           <Icon className={`w-3.5 h-3.5 ${iconColor}`} />
         </div>
       </div>
-      <p className="text-3xl font-bold text-text tabular-nums leading-none tracking-tight">{value}</p>
+      <p className="text-2xl font-bold text-text tabular-nums leading-none tracking-tight">{value}</p>
       {trend && (
         <p className="text-[11px] text-muted mt-2 leading-none">{trend}</p>
       )}

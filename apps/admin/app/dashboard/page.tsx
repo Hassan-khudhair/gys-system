@@ -11,6 +11,12 @@ import { Users, CheckCircle2, XCircle, AlertTriangle, Clock, Banknote, TrendingU
 import Link from "next/link";
 import type { Player } from "@gym/lib";
 
+interface ExerciseTypeStat {
+  type: string;
+  members: number;
+  revenue: number;
+}
+
 interface GymStats {
   total: number;
   active: number;
@@ -18,10 +24,7 @@ interface GymStats {
   expiring: number;
   total_revenue: number;
   monthly_revenue: number;
-  fitness_revenue: number;
-  bodybuilding_revenue: number;
-  fitness_members: number;
-  bodybuilding_members: number;
+  by_exercise_type: ExerciseTypeStat[];
 }
 
 export default function DashboardPage() {
@@ -69,21 +72,25 @@ export default function DashboardPage() {
     return diff + "d left";
   }
 
+  const TYPE_COLORS = ["#38BDF8", "#F59E0B", "#22C55E", "#A78BFA", "#FB7185", "#34D399", "#F97316"];
+
   const memberSegments = stats ? [
     { label: t("active"),        value: stats.active,   color: "#22C55E" },
     { label: t("expiring_soon"), value: stats.expiring, color: "#F59E0B" },
     { label: t("expired"),       value: stats.expired,  color: "#EF4444" },
   ] : [];
 
-  const exerciseSegments = stats ? [
-    { label: t("fitness"),      value: stats.fitness_members,      color: "#38BDF8" },
-    { label: t("bodybuilding"), value: stats.bodybuilding_members, color: "#F59E0B" },
-  ] : [];
+  const exerciseSegments = (stats?.by_exercise_type ?? []).map((et, i) => ({
+    label: et.type,
+    value: et.members,
+    color: TYPE_COLORS[i % TYPE_COLORS.length],
+  }));
 
-  const revenueSegments = stats ? [
-    { label: t("fitness"),      value: stats.fitness_revenue,      color: "#38BDF8" },
-    { label: t("bodybuilding"), value: stats.bodybuilding_revenue, color: "#F59E0B" },
-  ] : [];
+  const revenueSegments = (stats?.by_exercise_type ?? []).map((et, i) => ({
+    label: et.type,
+    value: et.revenue,
+    color: TYPE_COLORS[i % TYPE_COLORS.length],
+  }));
 
   if (loading) {
     return (
