@@ -1,34 +1,32 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import { Header } from "../../../components/header";
+import { useLocale } from "../../../lib/i18n";
 import { formatDate } from "@gym/lib";
 import type { GymApplication } from "@gym/lib";
 import { createClient } from "../../../lib/supabase/client";
-import {
-  Clock, CheckCircle2, XCircle, Building2, Mail, Phone,
-  MapPin, Loader2, AlertCircle
-} from "lucide-react";
+import { useToast } from "../../../components/toast";
+import { useConfirm } from "../../../components/confirm-dialog";
+import { Clock, CheckCircle2, XCircle, Building2, Mail, Phone, MapPin, Loader2, AlertCircle } from "lucide-react";
+import { Pagination } from "../../../components/pagination";
 
-const STATUS_CONFIG = {
-  pending:  { label: "Pending",  className: "text-[#F59E0B] bg-[#F59E0B]/10 border-[#F59E0B]/20",  icon: Clock },
-  approved: { label: "Approved", className: "text-[#22C55E] bg-[#22C55E]/10 border-[#22C55E]/20", icon: CheckCircle2 },
-  rejected: { label: "Rejected", className: "text-[#EF4444] bg-[#EF4444]/10 border-[#EF4444]/20", icon: XCircle },
+const STATUS_CLS = {
+  pending:  "text-warning bg-warning/10 border-warning/20",
+  approved: "text-success bg-success/10 border-success/20",
+  rejected: "text-danger bg-danger/10 border-danger/20",
 };
 
 type Tab = "pending" | "approved" | "rejected";
 
 function RejectModal({
-  open,
-  application,
-  onClose,
-  onRejected,
+  open, application, onClose, onRejected,
 }: {
   open: boolean;
   application: GymApplication | null;
   onClose: () => void;
-  onRejected: (applicationId: string, reason: string) => Promise<void>;
+  onRejected: (id: string, reason: string) => Promise<void>;
 }) {
+  const { t } = useLocale();
   const [reason, setReason] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -37,41 +35,29 @@ function RejectModal({
   async function handleReject() {
     setLoading(true);
     await onRejected(application!.id, reason);
-    setLoading(false);
-    onClose();
-    setReason("");
+    setLoading(false); onClose(); setReason("");
   }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
-      <div className="relative bg-[#1E293B] border border-[#334155] rounded-2xl w-full max-w-md p-6 shadow-2xl">
-        <h3 className="text-base font-semibold text-white mb-1">Reject Application</h3>
-        <p className="text-sm text-[#94A3B8] mb-4">
-          Rejecting <span className="text-white">{application.gym_name}</span>.
-          Optionally provide a reason.
+      <div className="relative bg-surface border border-border rounded-2xl w-full max-w-md p-6 shadow-2xl transition-colors">
+        <h3 className="text-base font-semibold text-text mb-1">{t("reject_application")}</h3>
+        <p className="text-sm text-muted mb-4">
+          {t("rejection_note")} <span className="text-text">{application.gym_name}</span>.
         </p>
-        <textarea
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          rows={3}
-          placeholder="Reason for rejection (optional)…"
-          className="w-full bg-[#0F172A] border border-[#334155] text-white rounded-lg px-3.5 py-2.5 text-sm placeholder:text-[#475569] focus:outline-none focus:border-[#EF4444] focus:ring-1 focus:ring-[#EF4444] transition-colors resize-none mb-4"
-        />
+        <textarea value={reason} onChange={(e) => setReason(e.target.value)} rows={3}
+          placeholder={t("rejection_reason_placeholder")}
+          className="w-full bg-bg border border-border text-text rounded-lg px-3.5 py-2.5 text-sm placeholder:text-faint focus:outline-none focus:border-danger focus:ring-1 focus:ring-danger transition-colors resize-none mb-4" />
         <div className="flex gap-3 justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 text-sm font-medium text-[#94A3B8] hover:text-white hover:bg-[#334155] rounded-lg transition-colors"
-          >
-            Cancel
+          <button onClick={onClose}
+            className="px-4 py-2 text-sm font-medium text-muted hover:text-text hover:bg-surface-2 rounded-lg transition-colors">
+            {t("cancel")}
           </button>
-          <button
-            onClick={handleReject}
-            disabled={loading}
-            className="flex items-center gap-2 px-4 py-2 bg-[#EF4444] hover:bg-red-600 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors"
-          >
+          <button onClick={handleReject} disabled={loading}
+            className="flex items-center gap-2 px-4 py-2 bg-danger hover:bg-danger/90 disabled:opacity-60 text-white text-sm font-semibold rounded-lg transition-colors">
             {loading && <Loader2 className="w-4 h-4 animate-spin" />}
-            Reject
+            {t("reject")}
           </button>
         </div>
       </div>
@@ -80,64 +66,52 @@ function RejectModal({
 }
 
 export default function ApplicationsPage() {
+  const { t } = useLocale();
+  const { toast } = useToast();
+  const { confirm } = useConfirm();
   const [applications, setApplications] = useState<GymApplication[]>([]);
   const [loading, setLoading] = useState(true);
   const [tab, setTab] = useState<Tab>("pending");
+  const [page, setPage] = useState(1);
   const [approving, setApproving] = useState<string | null>(null);
   const [rejectModal, setRejectModal] = useState<GymApplication | null>(null);
 
   const load = useCallback(async () => {
     const supabase = createClient();
-    const { data, error } = await supabase
-      .from("gym_applications")
-      .select("*")
-      .order("created_at", { ascending: false });
-    
-    if (error) {
-      console.error("Error loading applications:", error);
-    } else {
-      setApplications(data || []);
-    }
+    const { data } = await supabase.from("gym_applications").select("*").order("created_at", { ascending: false });
+    setApplications(data ?? []);
     setLoading(false);
   }, []);
 
-  useEffect(() => {
-    load();
-  }, [load]);
+  useEffect(() => { load(); }, [load]);
 
   async function handleApprove(app: GymApplication) {
-    if (!confirm(`Approve "${app.gym_name}" and create their gym account?`)) return;
-    setApproving(app.id);
-    
-    const supabase = createClient();
-    const { error } = await supabase.rpc("approve_gym_application", { 
-      application_id: app.id 
+    const ok = await confirm({
+      title: t("confirm_approve_title"),
+      message: t("confirm_approve_msg"),
+      confirmLabel: t("confirm_btn"),
     });
-
-    if (error) {
-      alert(error.message);
-    }
-
+    if (!ok) return;
+    setApproving(app.id);
+    const supabase = createClient();
+    const { error } = await supabase.rpc("approve_gym_application", { application_id: app.id });
+    if (error) { toast(error.message, "error"); }
+    else { toast(t("toast_gym_approved")); }
     setApproving(null);
     load();
   }
 
   async function handleReject(applicationId: string, reason: string) {
     const supabase = createClient();
-    const { error } = await supabase
-      .from("gym_applications")
-      .update({ 
-        status: "rejected", 
-        rejection_reason: reason || null,
-        reviewed_at: new Date().toISOString() 
-      })
-      .eq("id", applicationId);
-
-    if (error) {
-      alert(error.message);
-    }
+    const { error } = await supabase.from("gym_applications").update({
+      status: "rejected", rejection_reason: reason || null, reviewed_at: new Date().toISOString(),
+    }).eq("id", applicationId);
+    if (error) { toast(error.message, "error"); }
+    else { toast(t("toast_gym_rejected")); }
     load();
   }
+
+  const PAGE_SIZE = 10;
 
   const counts = {
     pending:  applications.filter((a) => a.status === "pending").length,
@@ -146,34 +120,38 @@ export default function ApplicationsPage() {
   };
 
   const filtered = applications.filter((a) => a.status === tab);
+  const totalPages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const paginated = filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+
+  function handleTab(key: Tab) { setTab(key); setPage(1); }
+
+  const STATUS_ICONS = { pending: Clock, approved: CheckCircle2, rejected: XCircle };
 
   const TABS: { key: Tab; label: string; icon: React.ElementType }[] = [
-    { key: "pending",  label: "Pending",  icon: Clock },
-    { key: "approved", label: "Approved", icon: CheckCircle2 },
-    { key: "rejected", label: "Rejected", icon: XCircle },
+    { key: "pending",  label: t("tab_pending"),  icon: Clock },
+    { key: "approved", label: t("tab_approved"), icon: CheckCircle2 },
+    { key: "rejected", label: t("tab_rejected"), icon: XCircle },
   ];
 
   return (
     <div className="flex-1 overflow-y-auto">
-      <Header title="Gym Applications" subtitle="Review and approve gym registration requests" />
+      <div className="px-6 py-5 border-b border-border">
+        <h1 className="text-lg font-semibold text-text">{t("applications_title")}</h1>
+        <p className="text-sm text-muted mt-0.5">{t("applications_subtitle")}</p>
+      </div>
 
       <div className="p-6 space-y-5">
-        {/* Tabs */}
-        <div className="flex items-center gap-1 bg-[#1E293B] border border-[#334155] rounded-lg p-1 w-fit">
+        <div className="flex items-center gap-1 bg-surface border border-border rounded-lg p-1 w-fit transition-colors">
           {TABS.map(({ key, label, icon: Icon }) => (
-            <button
-              key={key}
-              onClick={() => setTab(key)}
+            <button key={key} onClick={() => handleTab(key)}
               className={`flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                tab === key
-                  ? "bg-[#263348] text-white shadow-sm"
-                  : "text-[#94A3B8] hover:text-white"
+                tab === key ? "bg-surface-2 text-text shadow-sm" : "text-muted hover:text-text"
               }`}
             >
               <Icon className="w-3.5 h-3.5" />
               {label}
               <span className={`text-xs px-1.5 py-0.5 rounded-full font-medium ${
-                tab === key ? "bg-[#334155] text-white" : "text-[#475569]"
+                tab === key ? "bg-border text-text" : "text-faint"
               }`}>
                 {counts[key]}
               </span>
@@ -181,121 +159,94 @@ export default function ApplicationsPage() {
           ))}
         </div>
 
-        {/* Pending notice */}
         {tab === "pending" && counts.pending > 0 && (
-          <div className="flex items-start gap-3 bg-[#F59E0B]/5 border border-[#F59E0B]/20 rounded-xl px-4 py-3">
-            <AlertCircle className="w-4 h-4 text-[#F59E0B] mt-0.5 flex-shrink-0" />
-            <p className="text-sm text-[#94A3B8]">
-              <span className="text-[#F59E0B] font-medium">{counts.pending} gym{counts.pending > 1 ? "s" : ""}</span>{" "}
-              waiting for your approval. Approving will create their gym and grant dashboard access.
+          <div className="flex items-start gap-3 bg-warning/5 border border-warning/20 rounded-xl px-4 py-3">
+            <AlertCircle className="w-4 h-4 text-warning mt-0.5 shrink-0" />
+            <p className="text-sm text-muted">
+              <span className="text-warning font-medium">{counts.pending} {counts.pending > 1 ? t("pending_apps_plural") : t("pending_apps")}</span>{" "}
+              {t("review_note")}
             </p>
           </div>
         )}
 
         {loading ? (
-          <div className="bg-[#1E293B] border border-[#334155] rounded-xl p-16 flex items-center justify-center">
-            <div className="w-6 h-6 border-2 border-[#8B5CF6] border-t-transparent rounded-full animate-spin" />
+          <div className="bg-surface border border-border rounded-xl p-16 flex items-center justify-center transition-colors">
+            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="bg-[#1E293B] border border-[#334155] rounded-xl p-16 text-center">
-            <Building2 className="w-8 h-8 text-[#334155] mx-auto mb-3" />
-            <p className="text-[#94A3B8] text-sm">No {tab} applications.</p>
+          <div className="bg-surface border border-border rounded-xl p-16 text-center transition-colors">
+            <Building2 className="w-8 h-8 text-border mx-auto mb-3" />
+            <p className="text-muted text-sm">{t("no_applications")}</p>
           </div>
         ) : (
           <div className="space-y-3">
-            {filtered.map((app) => {
-              const cfg = STATUS_CONFIG[app.status];
-              const StatusIcon = cfg.icon;
+            {paginated.map((app) => {
+              const StatusIcon = STATUS_ICONS[app.status as keyof typeof STATUS_ICONS] ?? Clock;
+              const statusCls = STATUS_CLS[app.status as keyof typeof STATUS_CLS] ?? STATUS_CLS.pending;
               const isApprovingThis = approving === app.id;
 
               return (
-                <div
-                  key={app.id}
-                  className="bg-[#1E293B] border border-[#334155] rounded-xl p-5"
-                >
+                <div key={app.id} className="bg-surface border border-border rounded-xl p-5 transition-colors">
                   <div className="flex items-start justify-between gap-4">
-                    {/* Gym info */}
                     <div className="flex items-start gap-4 flex-1 min-w-0">
-                      <div className="w-11 h-11 rounded-xl bg-[#8B5CF6]/20 border border-[#8B5CF6]/30 flex items-center justify-center flex-shrink-0">
-                        <span className="text-sm font-bold text-[#8B5CF6]">
+                      <div className="w-11 h-11 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0">
+                        <span className="text-sm font-bold text-primary">
                           {app.gym_name.slice(0, 2).toUpperCase()}
                         </span>
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-sm font-semibold text-white truncate">{app.gym_name}</h3>
-                          <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border flex-shrink-0 ${cfg.className}`}>
+                          <h3 className="text-sm font-semibold text-text truncate">{app.gym_name}</h3>
+                          <span className={`inline-flex items-center gap-1 text-xs font-medium px-2 py-0.5 rounded-full border shrink-0 ${statusCls}`}>
                             <StatusIcon className="w-3 h-3" />
-                            {cfg.label}
+                            {app.status}
                           </span>
                         </div>
-                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#94A3B8]">
-                          {app.city && (
-                            <span className="flex items-center gap-1">
-                              <MapPin className="w-3 h-3" /> {app.city}
-                            </span>
-                          )}
-                          {app.phone && (
-                            <span className="flex items-center gap-1">
-                              <Phone className="w-3 h-3" /> {app.phone}
-                            </span>
-                          )}
-                          {app.gym_email && (
-                            <span className="flex items-center gap-1">
-                              <Mail className="w-3 h-3" /> {app.gym_email}
-                            </span>
-                          )}
+                        <div className="flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted">
+                          {app.city && <span className="flex items-center gap-1"><MapPin className="w-3 h-3" /> {app.city}</span>}
+                          {app.phone && <span className="flex items-center gap-1"><Phone className="w-3 h-3" /> {app.phone}</span>}
+                          {app.gym_email && <span className="flex items-center gap-1"><Mail className="w-3 h-3" /> {app.gym_email}</span>}
                         </div>
                       </div>
                     </div>
-
-                    {/* Applied date */}
-                    <div className="text-right flex-shrink-0">
-                      <p className="text-xs text-[#475569]">Applied</p>
-                      <p className="text-xs text-[#94A3B8]">{formatDate(app.created_at)}</p>
+                    <div className="text-end shrink-0">
+                      <p className="text-xs text-faint">{t("applied")}</p>
+                      <p className="text-xs text-muted">{formatDate(app.created_at)}</p>
                     </div>
                   </div>
 
-                  {/* Admin info */}
-                  <div className="mt-3 pt-3 border-t border-[#334155] flex items-center justify-between">
-                    <div className="text-xs text-[#94A3B8]">
-                      Admin: <span className="text-white">{app.admin_name}</span>{" "}
-                      <span className="text-[#475569]">({app.admin_email})</span>
+                  <div className="mt-3 pt-3 border-t border-border flex items-center justify-between">
+                    <div className="text-xs text-muted">
+                      {t("admin_label")}: <span className="text-text">{app.admin_name}</span>{" "}
+                      <span className="text-faint">({app.admin_email})</span>
                     </div>
-
-                    {/* Actions */}
                     {app.status === "pending" && (
                       <div className="flex items-center gap-2">
-                        <button
-                          onClick={() => setRejectModal(app)}
-                          disabled={isApprovingThis}
-                          className="px-3 py-1.5 text-xs font-medium text-[#EF4444] bg-[#EF4444]/10 hover:bg-[#EF4444]/20 border border-[#EF4444]/20 rounded-lg transition-colors disabled:opacity-50"
-                        >
-                          Reject
+                        <button onClick={() => setRejectModal(app)} disabled={isApprovingThis}
+                          className="px-3 py-1.5 text-xs font-medium text-danger bg-danger/10 hover:bg-danger/20 border border-danger/20 rounded-lg transition-colors disabled:opacity-50">
+                          {t("reject")}
                         </button>
-                        <button
-                          onClick={() => handleApprove(app)}
-                          disabled={isApprovingThis}
-                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-[#8B5CF6] hover:bg-[#7C3AED] rounded-lg transition-colors disabled:opacity-50"
-                        >
+                        <button onClick={() => handleApprove(app)} disabled={isApprovingThis}
+                          className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-primary hover:bg-primary/90 rounded-lg transition-colors disabled:opacity-50">
                           {isApprovingThis
-                            ? <><Loader2 className="w-3 h-3 animate-spin" /> Approving…</>
-                            : <><CheckCircle2 className="w-3 h-3" /> Approve</>
+                            ? <><Loader2 className="w-3 h-3 animate-spin" /> {t("approving")}</>
+                            : <><CheckCircle2 className="w-3 h-3" /> {t("approve")}</>
                           }
                         </button>
                       </div>
                     )}
-
                     {app.status === "rejected" && app.rejection_reason && (
-                      <p className="text-xs text-[#EF4444]">
-                        Reason: {app.rejection_reason}
-                      </p>
+                      <p className="text-xs text-danger">{t("reason")}: {app.rejection_reason}</p>
                     )}
                   </div>
                 </div>
               );
             })}
           </div>
+        )}
+
+        {!loading && filtered.length > PAGE_SIZE && (
+          <Pagination page={page} totalPages={totalPages} onPage={setPage} />
         )}
       </div>
 
