@@ -10,17 +10,20 @@ import { Building2, Users, CheckCircle2, AlertTriangle, Clock, Banknote, Trendin
 import Link from "next/link";
 import type { GymSummary } from "@gym/lib";
 
+interface ExerciseTypeStat {
+  type: string;
+  members: number;
+  revenue: number;
+}
+
 interface AllStats {
-  total: number;
-  active: number;
-  expired: number;
-  expiring: number;
-  total_revenue: number;
-  monthly_revenue: number;
-  fitness_revenue: number;
-  bodybuilding_revenue: number;
-  fitness_members: number;
-  bodybuilding_members: number;
+  total: number | null;
+  active: number | null;
+  expired: number | null;
+  expiring: number | null;
+  total_revenue: number | null;
+  monthly_revenue: number | null;
+  by_exercise_type: ExerciseTypeStat[] | null;
 }
 
 export default function DashboardPage() {
@@ -62,25 +65,32 @@ export default function DashboardPage() {
   const totalGyms = gymList.length;
   const activeGyms = gymList.filter((g) => g.status === "active").length;
 
-  function fmtCurrency(val: number) {
-    return val.toLocaleString() + " " + t("currency");
+  function fmtCurrency(val: number | null | undefined) {
+    return (val ?? 0).toLocaleString("en-US") + " " + t("currency");
   }
 
+  // Palette cycles through colours for as many exercise types as exist
+  const TYPE_COLORS = ["#38BDF8", "#F59E0B", "#22C55E", "#A78BFA", "#F472B6", "#34D399", "#FB923C"];
+
   const memberSegments = stats ? [
-    { label: t("active"),        value: stats.active,   color: "#22C55E" },
-    { label: t("expiring_soon"), value: stats.expiring, color: "#F59E0B" },
-    { label: t("expired"),       value: stats.expired,  color: "#EF4444" },
+    { label: t("active"),        value: stats.active   ?? 0, color: "#22C55E" },
+    { label: t("expiring_soon"), value: stats.expiring ?? 0, color: "#F59E0B" },
+    { label: t("expired"),       value: stats.expired  ?? 0, color: "#EF4444" },
   ] : [];
 
-  const exerciseSegments = stats ? [
-    { label: t("fitness"),      value: stats.fitness_members,      color: "#38BDF8" },
-    { label: t("bodybuilding"), value: stats.bodybuilding_members, color: "#F59E0B" },
-  ] : [];
+  const byType = stats?.by_exercise_type ?? [];
 
-  const revenueSegments = stats ? [
-    { label: t("fitness_revenue"),      value: stats.fitness_revenue,      color: "#38BDF8" },
-    { label: t("bodybuilding_revenue"), value: stats.bodybuilding_revenue, color: "#F59E0B" },
-  ] : [];
+  const exerciseSegments = byType.map((et, i) => ({
+    label: et.type,
+    value: et.members ?? 0,
+    color: TYPE_COLORS[i % TYPE_COLORS.length],
+  }));
+
+  const revenueSegments = byType.map((et, i) => ({
+    label: et.type,
+    value: et.revenue ?? 0,
+    color: TYPE_COLORS[i % TYPE_COLORS.length],
+  }));
 
   const topGyms = [...gymList]
     .sort((a, b) => (b.total_members ?? 0) - (a.total_members ?? 0))
@@ -120,8 +130,8 @@ export default function DashboardPage() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatsCard title={t("total_gyms")}    value={loading ? "—" : totalGyms}            icon={Building2}   iconColor="text-primary"    iconBg="bg-primary/15" />
           <StatsCard title={t("active_gyms")}   value={loading ? "—" : activeGyms}           icon={CheckCircle2} iconColor="text-success"    iconBg="bg-success/15" />
-          <StatsCard title={t("total_members")} value={loading ? "—" : (stats?.total ?? 0)}  icon={Users}        iconColor="text-[#38BDF8]"  iconBg="bg-[#38BDF8]/15" />
-          <StatsCard title={t("expiring_soon")} value={loading ? "—" : (stats?.expiring ?? 0)} icon={AlertTriangle} iconColor="text-warning" iconBg="bg-warning/15" trend={t("within_7_days")} />
+          <StatsCard title={t("total_members")} value={loading ? "—" : (stats?.total ?? 0)}    icon={Users}        iconColor="text-[#38BDF8]"  iconBg="bg-[#38BDF8]/15" />
+          <StatsCard title={t("expiring_soon")} value={loading ? "—" : (stats?.expiring ?? 0)} icon={AlertTriangle} iconColor="text-warning"    iconBg="bg-warning/15" trend={t("within_7_days")} />
         </div>
 
         {/* Revenue stats */}
@@ -146,20 +156,30 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* Exercise type distribution */}
+            {/* Exercise type distribution — dynamic, one slice per type */}
             <div className="bg-surface border border-border rounded-xl p-5 transition-colors">
               <h3 className="text-sm font-semibold text-text mb-4">{t("exercise_type_label")}</h3>
-              <div className="flex items-center gap-5">
-                <DonutChart segments={exerciseSegments} size={110} />
-                <Legend segments={exerciseSegments} />
-              </div>
+              {exerciseSegments.length > 0 ? (
+                <div className="flex items-center gap-5">
+                  <DonutChart segments={exerciseSegments} size={110} />
+                  <Legend segments={exerciseSegments} />
+                </div>
+              ) : (
+                <p className="text-xs text-muted">{t("no_exercise_types_yet")}</p>
+              )}
             </div>
 
-            {/* Revenue by type */}
+            {/* Revenue by exercise type */}
             <div className="bg-surface border border-border rounded-xl p-5 transition-colors">
               <h3 className="text-sm font-semibold text-text mb-4">{t("total_revenue")}</h3>
-              <HBarChart segments={revenueSegments} />
-              <p className="text-xs text-muted mt-3">{t("currency")}</p>
+              {revenueSegments.length > 0 ? (
+                <>
+                  <HBarChart segments={revenueSegments} />
+                  <p className="text-xs text-muted mt-3">{t("currency")}</p>
+                </>
+              ) : (
+                <p className="text-xs text-muted">{t("no_exercise_types_yet")}</p>
+              )}
             </div>
           </div>
         )}

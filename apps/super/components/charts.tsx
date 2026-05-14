@@ -6,8 +6,12 @@ interface Segment {
   color: string;
 }
 
+function n(val: number | null | undefined): number {
+  return val ?? 0;
+}
+
 export function DonutChart({ segments, size = 140 }: { segments: Segment[]; size?: number }) {
-  const total = segments.reduce((s, seg) => s + seg.value, 0);
+  const total = segments.reduce((s, seg) => s + n(seg.value), 0);
   const cx = size / 2;
   const cy = size / 2;
   const r = size / 2 - 14;
@@ -23,9 +27,9 @@ export function DonutChart({ segments, size = 140 }: { segments: Segment[]; size
 
   let offset = -Math.PI / 2;
   const arcs = segments
-    .filter((s) => s.value > 0)
+    .filter((s) => n(s.value) > 0)
     .map((seg) => {
-      const angle = (seg.value / total) * 2 * Math.PI;
+      const angle = (n(seg.value) / total) * 2 * Math.PI;
       const x1 = cx + r * Math.cos(offset);
       const y1 = cy + r * Math.sin(offset);
       offset += angle;
@@ -52,18 +56,18 @@ export function DonutChart({ segments, size = 140 }: { segments: Segment[]; size
 }
 
 export function HBarChart({ segments }: { segments: Segment[] }) {
-  const max = Math.max(...segments.map((s) => s.value), 1);
+  const max = Math.max(...segments.map((s) => n(s.value)), 1);
   return (
     <div className="space-y-3 w-full">
       {segments.map((seg) => (
         <div key={seg.label}>
           <div className="flex items-center justify-between mb-1">
             <span className="text-xs text-muted">{seg.label}</span>
-            <span className="text-xs font-semibold text-text">{seg.value.toLocaleString()}</span>
+            <span className="text-xs font-semibold text-text">{n(seg.value).toLocaleString("en-US")}</span>
           </div>
           <div className="h-2 rounded-full bg-border overflow-hidden">
             <div className="h-full rounded-full transition-all duration-500"
-              style={{ width: `${(seg.value / max) * 100}%`, backgroundColor: seg.color }} />
+              style={{ width: `${(n(seg.value) / max) * 100}%`, backgroundColor: seg.color }} />
           </div>
         </div>
       ))}
@@ -72,11 +76,11 @@ export function HBarChart({ segments }: { segments: Segment[] }) {
 }
 
 export function Legend({ segments }: { segments: Segment[] }) {
-  const total = segments.reduce((s, seg) => s + seg.value, 0);
+  const total = segments.reduce((s, seg) => s + n(seg.value), 0);
   return (
     <div className="space-y-2">
       {segments.map((seg) => {
-        const pct = total > 0 ? Math.round((seg.value / total) * 100) : 0;
+        const pct = total > 0 ? Math.round((n(seg.value) / total) * 100) : 0;
         return (
           <div key={seg.label} className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
@@ -84,7 +88,7 @@ export function Legend({ segments }: { segments: Segment[] }) {
               <span className="text-xs text-muted">{seg.label}</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-semibold text-text">{seg.value.toLocaleString()}</span>
+              <span className="text-xs font-semibold text-text">{n(seg.value).toLocaleString("en-US")}</span>
               <span className="text-[10px] text-faint w-8 text-end">{pct}%</span>
             </div>
           </div>

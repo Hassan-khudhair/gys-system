@@ -4,6 +4,8 @@
   "nav_all_players": "جميع الأعضاء",
   "nav_expired": "الاشتراكات المنتهية",
   "sign_out": "تسجيل الخروج",
+  "confirm_signout": "تسجيل الخروج",
+  "confirm_signout_msg": "هل أنت متأكد من تسجيل الخروج من حسابك؟",
 
 
   "dashboard_title": "لوحة التحكم",
