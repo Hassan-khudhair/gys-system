@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(pnpm install *)",
-      "Bash(node --input-type=module --check)"
+      "Bash(node --input-type=module --check)",
+      "Bash(python3 -c ' *)",
+      "PowerShell(head -20)"
     ]
   }
 }

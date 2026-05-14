@@ -34,11 +34,13 @@ export const metadata: Metadata = {
     capable: true,
     statusBarStyle: "black-translucent",
     title: "FitNex",
-    startupImage: "/logo.png",
   },
   icons: {
-    icon: [{ url: "/logo.png", type: "image/png" }],
-    apple: [{ url: "/logo.png", sizes: "180x180", type: "image/png" }],
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/logo.png", type: "image/png", sizes: "500x500" },
+    ],
+    apple: [{ url: "/logo.png", sizes: "500x500", type: "image/png" }],
   },
   formatDetection: {
     telephone: false,
