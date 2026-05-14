@@ -141,5 +141,6 @@
   "confirm_approve_title": "Approve Application",
   "confirm_approve_msg": "Approve this application? A gym account will be created and admin access granted.",
   "delete_btn": "Delete",
-  "confirm_btn": "Confirm"
+  "confirm_btn": "Confirm",
+  "no_data_yet": "No data available yet."
 }

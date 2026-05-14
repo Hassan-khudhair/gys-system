@@ -165,7 +165,7 @@ export default function DashboardPage() {
                   <Legend segments={exerciseSegments} />
                 </div>
               ) : (
-                <p className="text-xs text-muted">{t("no_exercise_types_yet")}</p>
+                <p className="text-xs text-muted">{t("no_data_yet")}</p>
               )}
             </div>
 
@@ -178,7 +178,7 @@ export default function DashboardPage() {
                   <p className="text-xs text-muted mt-3">{t("currency")}</p>
                 </>
               ) : (
-                <p className="text-xs text-muted">{t("no_exercise_types_yet")}</p>
+                <p className="text-xs text-muted">{t("no_data_yet")}</p>
               )}
             </div>
           </div>
