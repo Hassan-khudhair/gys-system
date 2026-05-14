@@ -36,11 +36,8 @@ export const metadata: Metadata = {
     title: "FitNex",
   },
   icons: {
-    icon: [
-      { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/logo.png", type: "image/png", sizes: "500x500" },
-    ],
-    apple: [{ url: "/logo.png", sizes: "500x500", type: "image/png" }],
+    icon: [{ url: "/logo.png", type: "image/png", sizes: "647x385" }],
+    apple: [{ url: "/logo.png", type: "image/png", sizes: "647x385" }],
   },
   formatDetection: {
     telephone: false,

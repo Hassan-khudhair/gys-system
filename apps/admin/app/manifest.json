@@ -13,7 +13,7 @@
   "icons": [
     { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
     { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "maskable" },
-    { "src": "/logo.png", "sizes": "500x500", "type": "image/png", "purpose": "any" }
+    { "src": "/logo.png", "sizes": "647x385", "type": "image/png", "purpose": "any" }
   ],
   "shortcuts": [
     {
@@ -21,14 +21,14 @@
       "short_name": "Players",
       "description": "Manage gym members",
       "url": "/dashboard/players",
-      "icons": [{ "src": "/logo.png", "sizes": "500x500", "type": "image/png" }]
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     },
     {
       "name": "Expired",
       "short_name": "Expired",
       "description": "View expired memberships",
       "url": "/dashboard/expired",
-      "icons": [{ "src": "/logo.png", "sizes": "500x500", "type": "image/png" }]
+      "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
     }
   ],
   "categories": ["productivity", "health", "fitness"]
