@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
 import { Sidebar } from "./sidebar";
 import { Header } from "./header";
+import { MobileNav } from "./mobile-nav";
 import { AdminProvider } from "../lib/admin-context";
 
 interface Props {
@@ -14,35 +15,27 @@ interface Props {
 }
 
 export function DashboardShell({ children, gymName, adminName, email, gymId = null }: Props) {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
   return (
     <AdminProvider gymId={gymId}>
       <div className="flex h-full min-h-screen bg-bg">
-        {isSidebarOpen && (
-          <div
-            className="fixed inset-0 bg-black/50 z-40 md:hidden backdrop-blur-sm transition-opacity"
-            onClick={() => setIsSidebarOpen(false)}
-          />
-        )}
 
-        <div className={`
-          fixed inset-y-0 inset-s-0 z-50 transition-transform duration-300 ease-in-out
-          md:static md:translate-x-0 md:z-auto
-          ${isSidebarOpen ? "translate-x-0" : "max-md:ltr:-translate-x-full max-md:rtl:translate-x-full"}
-        `}>
-          <Sidebar gymName={gymName} onClose={() => setIsSidebarOpen(false)} />
+        {/* Sidebar — desktop only */}
+        <div className="hidden md:flex">
+          <Sidebar gymName={gymName} />
         </div>
 
+        {/* Main content column */}
         <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
           <Header
             gymName={gymName}
             adminName={adminName}
             email={email}
-            onMenuClick={() => setIsSidebarOpen(true)}
           />
-          <main className="relative flex-1 overflow-y-auto" data-main-scroll>
-            {/* Logo watermark — sticky anchor keeps it centered in the viewport as content scrolls */}
+          <main
+            className="relative flex-1 overflow-y-auto pb-[calc(3.75rem+env(safe-area-inset-bottom))] md:pb-0"
+            data-main-scroll
+          >
+            {/* Logo watermark */}
             <div
               aria-hidden="true"
               className="sticky top-0 h-0 overflow-visible pointer-events-none select-none"
@@ -52,9 +45,11 @@ export function DashboardShell({ children, gymName, adminName, email, gymId = nu
                 className="absolute left-1/2"
                 style={{ top: "calc(30vh - 28px)", transform: "translate(-50%, -50%)" }}
               >
-                <img
+                <Image
                   src="/logo.png"
                   alt=""
+                  width={800}
+                  height={800}
                   style={{
                     width: "min(800px, 80vw)",
                     height: "min(800px, 80vw)",
@@ -67,11 +62,13 @@ export function DashboardShell({ children, gymName, adminName, email, gymId = nu
                 />
               </div>
             </div>
-            {/* Sentinel: header watches this to detect scroll */}
             <div id="dashboard-scroll-sentinel" aria-hidden="true" className="h-px" />
             {children}
           </main>
         </div>
+
+        {/* Mobile bottom navigation */}
+        <MobileNav />
       </div>
     </AdminProvider>
   );

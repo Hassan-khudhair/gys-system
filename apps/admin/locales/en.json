@@ -183,6 +183,11 @@
   "delete_btn": "Delete",
 
   "nav_exercise_types": "Exercise Types",
+  "nav_mob_home": "Home",
+  "nav_mob_players": "Players",
+  "nav_mob_expired": "Expired",
+  "nav_mob_types": "Types",
+  "nav_mob_plans": "Plans",
   "exercise_types_title": "Exercise Types",
   "exercise_types_subtitle": "Manage the exercise types offered at your gym",
   "add_exercise_type": "Add Type",
