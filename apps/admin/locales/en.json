@@ -3,6 +3,8 @@
   "nav_all_players": "All Players",
   "nav_expired": "Expired Players",
   "sign_out": "Sign out",
+  "confirm_signout": "Sign Out",
+  "confirm_signout_msg": "Are you sure you want to sign out of your account?",
 
   "dashboard_title": "Dashboard",
   "dashboard_subtitle": "Your gym overview",
