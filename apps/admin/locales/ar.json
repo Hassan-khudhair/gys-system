@@ -192,6 +192,11 @@
   "delete_btn": "حذف",
 
   "nav_exercise_types": "أنواع التمرين",
+  "nav_mob_home": "الرئيسية",
+  "nav_mob_players": "الأعضاء",
+  "nav_mob_expired": "منتهية",
+  "nav_mob_types": "الأنواع",
+  "nav_mob_plans": "الباقات",
   "exercise_types_title": "أنواع التمرين",
   "exercise_types_subtitle": "إدارة أنواع التمرين المتاحة في صالتك",
   "add_exercise_type": "إضافة نوع",

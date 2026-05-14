@@ -44,6 +44,50 @@ html, body {
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
   transition: background-color 0.2s, color 0.2s;
+  /* Prevent rubber-band bounce from revealing white background on iOS PWA */
+  overscroll-behavior: none;
+}
+
+/* ── PWA / Safe-area ────────────────────────────────────────────────── */
+
+/* Mobile nav background variable — respects theme */
+:root {
+  --mob-nav-bg: rgba(3, 13, 16, 0.88);
+}
+
+[data-theme="light"] {
+  --mob-nav-bg: rgba(224, 247, 249, 0.90);
+}
+
+/* Prevent text size adjustment after orientation change on iOS */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+/* Better tap highlight on mobile */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Smooth momentum scrolling on iOS */
+[data-main-scroll] {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ── Mobile card / table improvements ──────────────────────────────── */
+
+/* Horizontally scrollable tables on small screens */
+@media (max-width: 767px) {
+  .table-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Tighter page padding on mobile */
+  .page-pad {
+    padding-inline: 1rem;
+  }
 }
 
 [data-theme="light"] body {
